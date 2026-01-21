@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..util.fs import copytree, ensure_dir
+from ..util.fs import ensure_dir
 from .ziputil import zip_dir
 
 

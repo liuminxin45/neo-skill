@@ -23,7 +23,9 @@ def render_claude_skill_md(spec: SkillSpec) -> str:
         body.append("")
 
     body.append("## Degrees of freedom")
-    body.append(f"This skill is designed for **{spec.freedom_level}** freedom (high=heuristic, low=deterministic scripts).")
+    body.append(
+        f"This skill is designed for **{spec.freedom_level}** freedom (high=heuristic, low=deterministic scripts)."
+    )
     body.append("")
 
     if spec.questions:

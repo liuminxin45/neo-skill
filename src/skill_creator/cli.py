@@ -43,7 +43,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         "questions": DEFAULT_QUESTIONS,
         "triggers": [
             f"Create a new skill named {skill_name}",
-            f"Update the {skill_name} skill", 
+            f"Update the {skill_name} skill",
             f"Generate SKILL.md for {skill_name}",
             f"Package {skill_name} as a Claude .skill zip",
             f"Validate the {skill_name} skill",
@@ -68,7 +68,7 @@ def cmd_init(args: argparse.Namespace) -> int:
                 },
                 {
                     "id": "generate",
-                    "title": "Generate multi-assistant outputs", 
+                    "title": "Generate multi-assistant outputs",
                     "kind": "action",
                     "commands": [
                         f"skill-creator generate skills/{skill_name}/skillspec.json",
@@ -110,14 +110,29 @@ def cmd_init(args: argparse.Namespace) -> int:
     # Seed references from shared templates if present
     shared_data = repo_root / ".shared" / "skill-creator" / "data"
     if (shared_data / "output-patterns.md").exists():
-        (skill_dir / "references" / "output-patterns.md").write_text((shared_data / "output-patterns.md").read_text(encoding='utf-8'), encoding='utf-8')
+        (skill_dir / "references" / "output-patterns.md").write_text(
+            (shared_data / "output-patterns.md").read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
     if (shared_data / "workflows.md").exists():
-        (skill_dir / "references" / "workflows.md").write_text((shared_data / "workflows.md").read_text(encoding='utf-8'), encoding='utf-8')
+        (skill_dir / "references" / "workflows.md").write_text(
+            (shared_data / "workflows.md").read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
 
     # Minimal script placeholders (deterministic tools often live here)
-    (skill_dir / "scripts" / "init_skill.py").write_text("""# Placeholder: generated skill-specific initializer\n""", encoding='utf-8')
-    (skill_dir / "scripts" / "validate_skill.py").write_text("""# Placeholder: generated skill-specific validator\n""", encoding='utf-8')
-    (skill_dir / "scripts" / "package_skill.py").write_text("""# Placeholder: generated skill-specific packager\n""", encoding='utf-8')
+    (skill_dir / "scripts" / "init_skill.py").write_text(
+        """# Placeholder: generated skill-specific initializer\n""",
+        encoding="utf-8",
+    )
+    (skill_dir / "scripts" / "validate_skill.py").write_text(
+        """# Placeholder: generated skill-specific validator\n""",
+        encoding="utf-8",
+    )
+    (skill_dir / "scripts" / "package_skill.py").write_text(
+        """# Placeholder: generated skill-specific packager\n""",
+        encoding="utf-8",
+    )
 
     write_json(spec_path, spec)
     print(str(spec_path))
@@ -196,7 +211,12 @@ def cmd_package(args: argparse.Namespace) -> int:
 
     if args.target == "claude":
         # Validate before packaging
-        cmd_validate(argparse.Namespace(repo_root=str(repo_root), spec=str((repo_root / "skills" / args.skill / "skillspec.json"))))
+        cmd_validate(
+            argparse.Namespace(
+                repo_root=str(repo_root),
+                spec=str(repo_root / "skills" / args.skill / "skillspec.json"),
+            )
+        )
         out = package_claude_skill(repo_root, args.skill, out_dir)
         print(str(out))
         return 0
@@ -210,7 +230,10 @@ def cmd_package(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="skill-creator", description="Canonical SkillSpec -> multi-assistant skill outputs")
+    p = argparse.ArgumentParser(
+        prog="skill-creator",
+        description="Canonical SkillSpec -> multi-assistant skill outputs",
+    )
     p.add_argument("--repo-root", default=".", help="Repo root (default: current directory)")
 
     sub = p.add_subparsers(dest="cmd", required=True)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from ..util.fs import read_json
 
@@ -16,7 +16,13 @@ def _as_list(x: Any) -> List[Any]:
 
 
 def _kebab_case_ok(name: str) -> bool:
-    return bool(name) and all(c.islower() or c.isdigit() or c == '-' for c in name) and '--' not in name and not name.startswith('-') and not name.endswith('-')
+    return (
+        bool(name)
+        and all(c.islower() or c.isdigit() or c == "-" for c in name)
+        and "--" not in name
+        and not name.startswith("-")
+        and not name.endswith("-")
+    )
 
 
 @dataclass
@@ -72,7 +78,8 @@ class SkillSpec:
             version=int(d.get("version", 1)),
             name=str(d.get("name", "")).strip(),
             description=str(d.get("description", "")).strip(),
-            assistants=[str(x) for x in _as_list(d.get("assistants"))] or ["claude", "windsurf", "cursor", "github-skills"],
+            assistants=[str(x) for x in _as_list(d.get("assistants"))]
+            or ["claude", "windsurf", "cursor", "github-skills"],
             questions=[str(x) for x in _as_list(d.get("questions"))],
             triggers=[str(x) for x in _as_list(d.get("triggers"))],
             freedom_level=str(d.get("freedom_level", "low")).strip(),
