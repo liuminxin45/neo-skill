@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "id": "pnpm-single",
+  "displayName": "pnpm single-package",
+  "evidence": {
+    "mustExist": ["package.json"],
+    "mustNotExist": ["pnpm-workspace.yaml"],
+    "mayExist": ["pnpm-lock.yaml"]
+  },
+  "recommendedBoundaryToolOrder": ["eslint-plugin-boundaries", "dependency-cruiser"],
+  "recommendedScripts": {
+    "lint": "pnpm lint",
+    "typecheck": "pnpm typecheck",
+    "test": "pnpm test",
+    "depcheck": "pnpm depcheck"
+  },
+  "notes": [
+    "Even in a single package, enforce exports-only and avoid deep imports for long-term maintainability.",
+    "If the project is not TypeScript, omit typecheck or adapt to the project's static analysis tool."
+  ]
+}

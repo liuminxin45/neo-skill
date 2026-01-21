@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "id": "pnpm-workspace",
+  "displayName": "pnpm workspace (monorepo)",
+  "evidence": {
+    "mustExist": ["pnpm-workspace.yaml"],
+    "mayExist": ["pnpm-lock.yaml", "package.json"]
+  },
+  "recommendedBoundaryToolOrder": ["eslint-plugin-boundaries", "dependency-cruiser"],
+  "recommendedScripts": {
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "depcheck": "pnpm -r depcheck"
+  },
+  "notes": [
+    "If the repo already has a different command convention, adapt scripts rather than forcing renames.",
+    "Prefer workspace-wide consistency: exports-only imports, no deep internal imports."
+  ]
+}

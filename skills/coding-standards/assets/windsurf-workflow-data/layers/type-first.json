@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "paradigm": "type-first",
+  "notes": [
+    "This file is an input template for the coding-standards workflow.",
+    "Adjust globs and layer names per-repo; keep layer count small (<10)."
+  ],
+  "layers": [
+    {
+      "id": "presentation",
+      "displayName": "presentation",
+      "globs": [
+        "**/presentation/**",
+        "**/ui/**",
+        "**/pages/**",
+        "**/routes/**",
+        "**/controllers/**"
+      ],
+      "allowedImportsFrom": ["application", "domain", "shared", "types"]
+    },
+    {
+      "id": "application",
+      "displayName": "application",
+      "globs": [
+        "**/application/**",
+        "**/use-cases/**",
+        "**/services/**"
+      ],
+      "allowedImportsFrom": ["domain", "shared", "types"]
+    },
+    {
+      "id": "domain",
+      "displayName": "domain",
+      "globs": [
+        "**/domain/**",
+        "**/entities/**",
+        "**/value-objects/**"
+      ],
+      "allowedImportsFrom": ["shared", "types"]
+    },
+    {
+      "id": "infra",
+      "displayName": "infra",
+      "globs": [
+        "**/infra/**",
+        "**/adapters/**",
+        "**/repositories/**",
+        "**/datasources/**"
+      ],
+      "allowedImportsFrom": ["application", "domain", "shared", "types"]
+    },
+    {
+      "id": "shared",
+      "displayName": "shared",
+      "globs": [
+        "**/shared/**",
+        "**/common/**",
+        "**/utils/**",
+        "**/lib/**"
+      ],
+      "allowedImportsFrom": ["shared", "types"]
+    },
+    {
+      "id": "types",
+      "displayName": "types",
+      "globs": [
+        "**/types/**",
+        "**/*.d.ts"
+      ],
+      "allowedImportsFrom": ["types"]
+    },
+    {
+      "id": "tests",
+      "displayName": "tests",
+      "globs": [
+        "**/__tests__/**",
+        "**/*.test.*",
+        "**/*.spec.*"
+      ],
+      "allowedImportsFrom": [
+        "presentation",
+        "application",
+        "domain",
+        "infra",
+        "shared",
+        "types",
+        "tests"
+      ]
+    }
+  ]
+}

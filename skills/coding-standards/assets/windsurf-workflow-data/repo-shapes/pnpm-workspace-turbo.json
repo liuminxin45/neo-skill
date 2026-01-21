@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "id": "pnpm-workspace-turbo",
+  "displayName": "pnpm workspace + Turborepo",
+  "evidence": {
+    "mustExist": ["pnpm-workspace.yaml", "turbo.json"],
+    "mayExist": ["pnpm-lock.yaml", "package.json"]
+  },
+  "recommendedBoundaryToolOrder": ["eslint-plugin-boundaries", "dependency-cruiser"],
+  "recommendedScripts": {
+    "lint": "pnpm turbo run lint",
+    "typecheck": "pnpm turbo run typecheck",
+    "test": "pnpm turbo run test",
+    "depcheck": "pnpm turbo run depcheck"
+  },
+  "notes": [
+    "If turbo pipeline does not have these tasks yet, define them incrementally and keep a pnpm -r fallback.",
+    "PR gate can use turbo filters/affected if your repo already relies on it."
+  ]
+}
