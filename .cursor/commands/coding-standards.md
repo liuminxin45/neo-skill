@@ -20,13 +20,15 @@ omni-skill do --agent
 ## Workflow
 Mode: `sequential`
 
-### 1. 识别仓库形态（repo shape）并选择最小改动路径
-### 2. 基于 git diff 识别主要改动层级（type-first）
-### 3. Hard Gate 基线：ESLint + TypeScript + Prettier（早期接入）
-### 4. 边界约束（Hard Gate）：跨层/exports-only/禁止深层 import
-### 5. 可移植性（Hard Gate）：绝对路径/cwd 依赖/alias 一致性/环境敏感值
-### 6. 循环依赖（Hard Gate）：模块循环 / 包循环 / 项目引用循环
-### 7. 安全与仓库卫生（Hard Gate）：secrets / 危险 API / 产物入库 / lock 策略
-### 8. 架构/工程化规范（尽可能自动化，剩余项进入 review gate）
-### 9. 依赖检查（Hard Gate）：unused / ghost / 版本漂移
-### 10. CI PR gate 绑定 + 汇总输出（可执行清单）
+### 1. 创建修复分支（commit id + 英文简述）
+### 2. 识别仓库形态（repo shape）并选择最小改动路径
+### 3. 基于 git diff 识别主要改动层级（type-first）
+### 4. Hard Gate 基线：ESLint + TypeScript + Prettier（早期接入）
+### 5. 边界约束（Hard Gate）：跨层/exports-only/禁止深层 import
+### 6. 可移植性（Hard Gate）：绝对路径/cwd 依赖/alias 一致性/环境敏感值
+### 7. 循环依赖（Hard Gate）：模块循环 / 包循环 / 项目引用循环
+### 8. 安全与仓库卫生（Hard Gate）：secrets / 危险 API / 产物入库 / lock 策略
+### 9. 架构/工程化规范（尽可能自动化，剩余项进入 review gate）
+### 10. 依赖检查（Hard Gate）：unused / ghost / 版本漂移
+### 11. CI PR gate 绑定 + 汇总输出（可执行清单）
+### 12. 提交变更并创建 PR

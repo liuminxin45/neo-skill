@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import zipfile
 from pathlib import Path
+from typing import Optional
 
 
-def zip_dir(src_dir: Path, out_path: Path, *, root_name: str | None = None) -> None:
+def zip_dir(src_dir: Path, out_path: Path, *, root_name: Optional[str] = None) -> None:
     """Zip a directory.
 
     If root_name is provided, the zip will contain entries under that root folder,

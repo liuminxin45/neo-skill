@@ -26,6 +26,16 @@
     "type": "sequential",
     "steps": [
       {
+        "id": "branch",
+        "title": "创建修复分支（commit id + 英文简述）",
+        "kind": "gate",
+        "commands": [
+          "git status --porcelain",
+          "git checkout -b \"$(git rev-parse --short HEAD)-<english-brief-kebab-case>\""
+        ],
+        "notes": "在开始修改前必须创建一个新分支，专用于修复当前（上次提交）引入的 coding-standards 问题。分支名规则：短 commit id + 英文简述（kebab-case）。如果工作区不干净，先提交/暂存/清理后再继续。"
+      },
+      {
         "id": "shape",
         "title": "识别仓库形态（repo shape）并选择最小改动路径",
         "kind": "action",
@@ -94,6 +104,19 @@
         "kind": "action",
         "commands": [],
         "notes": "触发：手动运行 + 绑定到 CI PR 检查。输出必须包含：repo_shape、primary_layer、边界工具选择；Hard Gate 自动化项/仅 review 项；最小 diff 的配置文件清单；本地与 CI 可复制命令清单。输出模板见 `references/hard-gate.md`。"
+      },
+      {
+        "id": "pr",
+        "title": "提交变更并创建 PR",
+        "kind": "gate",
+        "commands": [
+          "git status --porcelain",
+          "git add -A",
+          "git commit -m \"chore(coding-standards): hard gate\"",
+          "git push -u origin HEAD",
+          "gh pr create --fill --title \"chore(coding-standards): hard gate\" || echo \"gh CLI not found; please create a PR manually from this branch.\""
+        ],
+        "notes": "将本次最小 diff 的配置变更提交到刚创建的分支，并创建 PR。优先使用 GitHub CLI（gh）。如果没有 gh，需要手动在 GitHub 上从当前分支发起 PR（base=main）。"
       }
     ]
   },
