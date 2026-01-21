@@ -25,13 +25,24 @@ omni-skill init
 omni-skill init --skill coding-standards
 ```
 
-**场景 2：在其他项目中使用 neo-skill 的 skill**
-1. 将 neo-skill 仓库克隆到你的项目中（例如 `vendor/neo-skill/`）
-2. 根据你使用的 IDE，复制对应的入口文件到项目根目录：
-   - **Windsurf**：复制 `.windsurf/workflows/<skill>.md` 和 `.windsurf/workflows/data/`
-   - **Cursor**：复制 `.cursor/commands/<skill>.md`
-   - **Claude Desktop**：复制 `.claude/skills/<skill>/`
-   - **GitHub / VS Code Skills**：复制 `.github/skills/<skill>/`
+**场景 2：在 neo-skill 仓库内一键更新并重新生成所有 IDE 入口文件**
+在 neo-skill 仓库根目录执行：
+
+```bash
+omni-skill update
+```
+
+行为说明：
+- 自动清空本地 git 变更（`git reset --hard` + `git clean -fdx`）
+- 拉取最新代码（`git pull`）
+- 自动执行一次 `omni-skill init`（重新生成 `.windsurf/.claude/.cursor/.github` 所有 IDE 入口文件）
+
+**场景 3：在其他项目中使用 neo-skill 的 skill**
+将 neo-skill 仓库克隆到你的项目中（例如 `vendor/neo-skill/`），然后根据你使用的 IDE，复制对应的入口文件到项目根目录：
+- **Windsurf**：复制 `.windsurf/workflows/<skill>.md` 和 `.windsurf/workflows/data/`
+- **Cursor**：复制 `.cursor/commands/<skill>.md`
+- **Claude Desktop**：复制 `.claude/skills/<skill>/`
+- **GitHub / VS Code Skills**：复制 `.github/skills/<skill>/`
 
 ### 推荐用法（短命令）
 > 如果 `omni-skill` 已安装为 CLI。
@@ -40,8 +51,6 @@ omni-skill init --skill coding-standards
 # 生成 + 校验（自动识别 skillspec.json）
 # 会同时生成 .windsurf/.claude/.cursor/.github 所有 IDE 的入口文件
 omni-skill init
-# 或
-omni-skill do
 
 # 指定 skill 名称
 omni-skill init --skill coding-standards
@@ -72,7 +81,7 @@ omni-skill init --spec skills/coding-standards/skillspec.json
 ### 无安装回退方案
 ```bash
 python -m omni_skill.cli init
-python -m omni_skill.cli do
+python -m omni_skill.cli update
 ```
 
 ### 直接调用 skill-creator
