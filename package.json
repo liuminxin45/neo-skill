@@ -19,7 +19,7 @@
     "pyproject.toml"
   ],
   "scripts": {
-    "postinstall": "npm install -g uipro-cli || echo 'Note: uipro-cli installation skipped'"
+    "postinstall": "node -e \"process.env.NEO_SKILLS_SKIP_UIPRO_INSTALL==='1'?process.exit(0):process.exit(require('child_process').spawnSync('npm',['install','-g','uipro-cli'],{stdio:'inherit',shell:true}).status||0)\""
   },
   "engines": {
     "node": ">=16"
