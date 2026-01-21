@@ -12,13 +12,14 @@
     "需要哪些输入（repo/commit/diff/config/logs 等），从哪里来？",
     "工作流要拆成哪些关键步骤/分支？关键 gate 是什么？",
     "常见失败/边界情况有哪些？希望如何处理（停止/回退/提示）？",
-    "为了减少上下文占用，哪些内容应放到 references/ 或 scripts/ 里？",
+    "为了减少上下文占用与便于复用：哪些内容应放到 references/（规则/规范/模板）、assets/（结构化数据/默认规则库）或 scripts/（确定性执行）里？",
     "需要适配哪些 AI Assistant（Claude/Windsurf/Cursor/VS Code/GitHub Copilot 等）？"
   ],
   "triggers": [
     "我想做一个 skill（Claude/Windsurf/Cursor 都能用）",
     "帮我生成 SKILL.md",
     "把我的 prompt 工作流变成 skill",
+    "帮我在已有 skill 的基础上补充/重构 workflow steps",
     "做一个 skill 库/skill creator",
     "打包成 Claude .skill"
   ],
@@ -39,6 +40,13 @@
         "kind": "action",
         "commands": [],
         "notes": "把收集到的信息写入 skills/<name>/skillspec.json；确定 references/scripts/assets 需要哪些内容（progressive disclosure）。"
+      },
+      {
+        "id": "edit-workflow",
+        "title": "对话式补充/重构 workflow steps（归类/增删/合并）",
+        "kind": "action",
+        "commands": [],
+        "notes": "当目标是‘更新已有 skill’时：先读取现有 skills/<skill>/skillspec.json，提取现有 workflow.steps 与每步意图；再把用户新增需求归类到已有 step（必要时新增 step）；允许删除或合并 step（必须给出理由与安全检查）；默认采用‘索引式工作流’：step 只做索引，详细规则/模板/默认库应沉淀在 references/ 或 assets/，必要时用 scripts/ 保证确定性；最后输出一个可落盘的变更摘要 + 最终 workflow.steps。协议与输出模板见 `references/workflow-step-editing.md`。"
       },
       {
         "id": "generate",
@@ -72,7 +80,8 @@
   },
   "references": [
     "references/output-patterns.md",
-    "references/workflows.md"
+    "references/workflows.md",
+    "references/workflow-step-editing.md"
   ],
   "scripts": [],
   "assets": []

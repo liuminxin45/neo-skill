@@ -24,6 +24,9 @@ Mode: `sequential`
 ### 2. 基于 git diff 识别主要改动层级（type-first）
 ### 3. Hard Gate 基线：ESLint + TypeScript + Prettier（早期接入）
 ### 4. 边界约束（Hard Gate）：跨层/exports-only/禁止深层 import
-### 5. 架构/工程化规范（尽可能自动化，剩余项进入 review gate）
-### 6. 依赖检查（Hard Gate）：unused / ghost / 版本漂移
-### 7. CI PR gate 绑定 + 汇总输出（可执行清单）
+### 5. 可移植性（Hard Gate）：绝对路径/cwd 依赖/alias 一致性/环境敏感值
+### 6. 循环依赖（Hard Gate）：模块循环 / 包循环 / 项目引用循环
+### 7. 安全与仓库卫生（Hard Gate）：secrets / 危险 API / 产物入库 / lock 策略
+### 8. 架构/工程化规范（尽可能自动化，剩余项进入 review gate）
+### 9. 依赖检查（Hard Gate）：unused / ghost / 版本漂移
+### 10. CI PR gate 绑定 + 汇总输出（可执行清单）

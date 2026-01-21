@@ -54,6 +54,27 @@
         "notes": "必须覆盖：禁止跨层依赖；只允许从 package.json#exports 导入；禁止深层内部目录 import。工具落地二选一：eslint-plugin-boundaries 或 dependency-cruiser（随 repo shape 推荐）。细节与默认 denylist 见 `references/hard-gate.md`。"
       },
       {
+        "id": "portability",
+        "title": "可移植性（Hard Gate）：绝对路径/cwd 依赖/alias 一致性/环境敏感值",
+        "kind": "gate",
+        "commands": [],
+        "notes": "必须覆盖：绝对路径/用户目录、cwd 不确定性、alias 一致性、环境敏感值治理。细节见 `references/hard-gate.md` 的“可移植性（Hard Gate）”章节。"
+      },
+      {
+        "id": "cycle-deps",
+        "title": "循环依赖（Hard Gate）：模块循环 / 包循环 / 项目引用循环",
+        "kind": "gate",
+        "commands": [],
+        "notes": "必须覆盖：模块循环/包循环/TS 引用循环的检测与阻断。细节见 `references/hard-gate.md` 的“循环依赖（Hard Gate）”章节。"
+      },
+      {
+        "id": "security-hygiene",
+        "title": "安全与仓库卫生（Hard Gate）：secrets / 危险 API / 产物入库 / lock 策略",
+        "kind": "gate",
+        "commands": [],
+        "notes": "必须覆盖：secrets、危险 API、产物入库、lock 策略一致性。细节见 `references/hard-gate.md` 的“安全与仓库卫生（Hard Gate）”章节。"
+      },
+      {
         "id": "architecture",
         "title": "架构/工程化规范（尽可能自动化，剩余项进入 review gate）",
         "kind": "action",
