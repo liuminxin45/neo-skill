@@ -71,7 +71,7 @@ def cmd_init(args: argparse.Namespace) -> int:
                     "title": "Generate multi-assistant outputs", 
                     "kind": "action",
                     "commands": [
-                        f"python3 .shared/skill-creator/scripts/generate.py skills/{skill_name}/skillspec.json",
+                        f"skill-creator generate skills/{skill_name}/skillspec.json",
                     ],
                     "notes": "Produce Claude/Windsurf/Cursor/GitHub Skills wrappers.",
                 },
@@ -80,7 +80,7 @@ def cmd_init(args: argparse.Namespace) -> int:
                     "title": "Validate the spec + outputs",
                     "kind": "gate",
                     "commands": [
-                        f"python3 .shared/skill-creator/scripts/validate.py skills/{skill_name}/skillspec.json",
+                        f"skill-creator validate skills/{skill_name}/skillspec.json",
                     ],
                     "notes": "Fail fast on metadata violations or banned files.",
                 },
@@ -89,7 +89,7 @@ def cmd_init(args: argparse.Namespace) -> int:
                     "title": "Package for Claude (.skill)",
                     "kind": "action",
                     "commands": [
-                        f"python3 .shared/skill-creator/scripts/package.py --target claude --skill {skill_name}",
+                        f"skill-creator package --target claude --skill {skill_name}",
                     ],
                     "notes": "Zip root must be the skill folder (not flat files).",
                 },

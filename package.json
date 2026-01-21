@@ -1,0 +1,20 @@
+{
+  "name": "neo-skills",
+  "version": "0.1.0",
+  "description": "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec.",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "bin": {
+    "omni-skill": "bin/omni-skill.js",
+    "skill-creator": "bin/skill-creator.js"
+  },
+  "files": [
+    "bin/**",
+    "src/**",
+    "README.md",
+    "pyproject.toml"
+  ],
+  "engines": {
+    "node": ">=16"
+  }
+}
