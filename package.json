@@ -11,9 +11,16 @@
   "files": [
     "bin/**",
     "src/**",
+    ".claude/**",
+    ".windsurf/**",
+    ".cursor/**",
+    ".github/skills/**",
     "README.md",
     "pyproject.toml"
   ],
+  "scripts": {
+    "postinstall": "npm install -g uipro-cli || echo 'Note: uipro-cli installation skipped'"
+  },
   "engines": {
     "node": ">=16"
   }
