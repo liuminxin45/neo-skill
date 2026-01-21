@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=56"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ai-skill-creator"
 version = "0.1.0"
 description = "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec."
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 license = {text = "UNLICENSED"}
 authors = [{name = "skill-creator"}]
 
