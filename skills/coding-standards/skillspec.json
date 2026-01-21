@@ -36,6 +36,15 @@
         "notes": "在开始修改前必须创建一个新分支，专用于修复当前（上次提交）引入的 coding-standards 问题。分支名规则：短 commit id + 英文简述（kebab-case）。如果工作区不干净，先提交/暂存/清理后再继续。"
       },
       {
+        "id": "tests-pre",
+        "title": "创建分支后：运行一次完整单测（若没有则跳过；失败先修复再继续）",
+        "kind": "gate",
+        "commands": [
+          "node -e \"const fs=require('fs');const path=require('path');const {spawnSync}=require('child_process');const cwd=process.cwd();const has=(p)=>fs.existsSync(path.join(cwd,p));const run=(cmd,args)=>{const r=spawnSync(cmd,args,{stdio:'inherit',shell:true});if(r.error&&String(r.error.message||'').toLowerCase().includes('enoent'))return {missing:true};if(r.error)throw r.error;process.exitCode=(r.status==null?1:r.status);return {missing:false,code:process.exitCode};};let r=null;if(has('pnpm-workspace.yaml')){r=run('pnpm',['-r','test','--if-present']);}else if(has('pnpm-lock.yaml')){r=run('pnpm',['test','--if-present']);}else{r=run('npm',['test','--if-present']);}if(r&&r.missing){console.log('Test runner not found; skipping tests.');process.exit(0);}if(process.exitCode&&process.exitCode!==0)process.exit(process.exitCode);\""
+        ],
+        "notes": "在新分支创建后立即执行一次全量单测。若仓库无 test 命令（或无测试），则跳过；若失败，必须先修复到通过后再继续后续所有 step。"
+      },
+      {
         "id": "shape",
         "title": "识别仓库形态（repo shape）并选择最小改动路径",
         "kind": "action",
@@ -104,6 +113,15 @@
         "kind": "action",
         "commands": [],
         "notes": "触发：手动运行 + 绑定到 CI PR 检查。输出必须包含：repo_shape、primary_layer、边界工具选择；Hard Gate 自动化项/仅 review 项；最小 diff 的配置文件清单；本地与 CI 可复制命令清单。输出模板见 `references/hard-gate.md`。"
+      },
+      {
+        "id": "tests-post",
+        "title": "提交前：再次运行一次完整单测（若没有则跳过；失败先修复到通过）",
+        "kind": "gate",
+        "commands": [
+          "node -e \"const fs=require('fs');const path=require('path');const {spawnSync}=require('child_process');const cwd=process.cwd();const has=(p)=>fs.existsSync(path.join(cwd,p));const run=(cmd,args)=>{const r=spawnSync(cmd,args,{stdio:'inherit',shell:true});if(r.error&&String(r.error.message||'').toLowerCase().includes('enoent'))return {missing:true};if(r.error)throw r.error;process.exitCode=(r.status==null?1:r.status);return {missing:false,code:process.exitCode};};let r=null;if(has('pnpm-workspace.yaml')){r=run('pnpm',['-r','test','--if-present']);}else if(has('pnpm-lock.yaml')){r=run('pnpm',['test','--if-present']);}else{r=run('npm',['test','--if-present']);}if(r&&r.missing){console.log('Test runner not found; skipping tests.');process.exit(0);}if(process.exitCode&&process.exitCode!==0)process.exit(process.exitCode);\""
+        ],
+        "notes": "在提交变更之前，必须再跑一次全量单测，确保后续 commit 的分支处于可用状态。若失败，先修复到通过，再进入提交步骤。"
       },
       {
         "id": "pr",
