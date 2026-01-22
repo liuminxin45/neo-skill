@@ -7,12 +7,14 @@ from .common import _render_steps, _render_resources, _render_footer
 
 def render_github_skill_md(spec: SkillSpec) -> str:
     # GitHub/Agent Skills can support additional metadata; keep it conservative.
-    fm = dump_frontmatter({
-        "name": spec.name,
-        "description": spec.description,
-        "compatibility": "Multi-assistant (Claude/Windsurf/Cursor/GitHub Skills)",
-        "metadata": "Generated from canonical skillspec.json"
-    })
+    fm = dump_frontmatter(
+        {
+            "name": spec.name,
+            "description": spec.description,
+            "compatibility": "Multi-assistant (Claude/Windsurf/Cursor/GitHub Skills)",
+            "metadata": "Generated from canonical skillspec.json",
+        }
+    )
 
     body = []
     body.append("# " + spec.name)

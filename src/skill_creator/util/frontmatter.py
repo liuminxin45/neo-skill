@@ -18,7 +18,7 @@ def dump_frontmatter(fields: Dict[str, Any]) -> str:
         # Quote if it contains colon, newline, or leading/trailing whitespace
         if any(ch in s for ch in [":", "\n"]) or s != s.strip():
             s = s.replace("\\", "\\\\").replace('"', '\\"')
-            s = f"\"{s}\""
+            s = f'"{s}"'
         lines.append(f"{k}: {s}")
     lines.append("---")
     return "\n".join(lines) + "\n"

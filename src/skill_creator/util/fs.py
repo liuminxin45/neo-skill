@@ -11,12 +11,12 @@ def ensure_dir(path: Path) -> None:
 
 
 def read_json(path: Path) -> Dict[str, Any]:
-    return json.loads(path.read_text(encoding='utf-8'))
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def write_json(path: Path, obj: Any) -> None:
     ensure_dir(path.parent)
-    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding='utf-8')
+    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def copytree(src: Path, dst: Path, *, overwrite: bool = True) -> None:
