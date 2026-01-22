@@ -38,7 +38,7 @@ coverage/
 .cursor/
 .windsurf/
 .shared/
-.github/
+.github/skills/
 
 # OS
 Thumbs.db
