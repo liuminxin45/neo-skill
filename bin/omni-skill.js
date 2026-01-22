@@ -24,6 +24,27 @@ function copyDirRecursive(src, dest) {
   }
 }
 
+function syncDirReplace(src, dest) {
+  if (!fs.existsSync(src)) return;
+
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    fs.rmSync(destPath, { recursive: true, force: true });
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
 function runUiproCommand(args) {
   const cmd = "uipro";
   const result = spawnSync(cmd, args, { stdio: "inherit", shell: true });
@@ -47,29 +68,36 @@ function handleInit() {
   const pkgRoot = path.resolve(__dirname, "..");
   const cwd = process.cwd();
 
-  const skillDirs = [".claude", ".windsurf", ".cursor", ".github"];
+  const syncPairs = [
+    { src: "skills", dest: "skills" },
+    { src: path.join(".shared", "skill-creator"), dest: path.join(".shared", "skill-creator") },
+    { src: path.join(".claude", "skills"), dest: path.join(".claude", "skills") },
+    { src: path.join(".windsurf", "workflows"), dest: path.join(".windsurf", "workflows") },
+    { src: path.join(".cursor", "commands"), dest: path.join(".cursor", "commands") },
+    { src: path.join(".github", "skills"), dest: path.join(".github", "skills") },
+  ];
 
   console.log("Initializing skills in:", cwd);
 
-  for (const dir of skillDirs) {
-    const src = path.join(pkgRoot, dir);
-    const dest = path.join(cwd, dir);
+  for (const p of syncPairs) {
+    const src = path.join(pkgRoot, p.src);
+    const dest = path.join(cwd, p.dest);
 
     if (!fs.existsSync(src)) {
-      console.log(`  Skipping ${dir} (not found in package)`);
+      console.log(`  Skipping ${p.dest} (not found in package)`);
       continue;
     }
 
-    if (fs.existsSync(dest)) {
-      console.log(`  Merging ${dir} (already exists)`);
-    } else {
-      console.log(`  Creating ${dir}`);
-    }
-
-    copyDirRecursive(src, dest);
+    console.log(`  Syncing ${p.dest} (replace items)`);
+    syncDirReplace(src, dest);
   }
 
   console.log("\nDone! neo-skills have been initialized.");
+
+  if (String(process.env.NEO_SKILLS_SKIP_UIPRO_INIT || "").trim() === "1") {
+    console.log("\nSkipping uipro init (NEO_SKILLS_SKIP_UIPRO_INIT=1)");
+    return;
+  }
 
   console.log("\nRunning uipro init --ai all...");
   runUiproCommand(["init", "--ai", "all"]);

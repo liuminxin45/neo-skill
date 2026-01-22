@@ -4,8 +4,21 @@ import argparse
 import os
 from pathlib import Path
 import subprocess
+from typing import Optional
 
 from skill_creator.cli import cmd_generate, cmd_validate
+
+
+def _find_skill_repo_root(start: Path) -> Optional[Path]:
+    cur = start.resolve()
+    for _ in range(10):
+        skills_dir = cur / "skills"
+        if skills_dir.is_dir() and any(skills_dir.glob("*/skillspec.json")):
+            return cur
+        if cur.parent == cur:
+            break
+        cur = cur.parent
+    return None
 
 
 def _resolve_repo_root(repo_root_arg: str) -> Path:
@@ -15,11 +28,23 @@ def _resolve_repo_root(repo_root_arg: str) -> Path:
 
 
 def _resolve_spec_path(repo_root: Path, args: argparse.Namespace) -> Path:
+    bundled_repo_root = _find_skill_repo_root(Path(__file__).resolve())
+
     if getattr(args, "spec", ""):
         return Path(args.spec).resolve()
 
     if getattr(args, "skill", ""):
-        return (repo_root / "skills" / args.skill / "skillspec.json").resolve()
+        candidate = (repo_root / "skills" / args.skill / "skillspec.json").resolve()
+        if candidate.exists():
+            return candidate
+        if bundled_repo_root is not None:
+            bundled = (bundled_repo_root / "skills" / args.skill / "skillspec.json").resolve()
+            if bundled.exists():
+                return bundled
+        raise SystemExit(
+            f"Skill not found: {args.skill}. "
+            "Run from within the neo-skill repo, or pass --spec <path> to a skillspec.json."
+        )
 
     cwd_spec = Path.cwd() / "skillspec.json"
     if cwd_spec.exists():
@@ -31,23 +56,55 @@ def _resolve_spec_path(repo_root: Path, args: argparse.Namespace) -> Path:
 
     env_skill = os.environ.get("OMNI_SKILL", "").strip()
     if env_skill:
-        return (repo_root / "skills" / env_skill / "skillspec.json").resolve()
+        candidate = (repo_root / "skills" / env_skill / "skillspec.json").resolve()
+        if candidate.exists():
+            return candidate
+        if bundled_repo_root is not None:
+            bundled = (bundled_repo_root / "skills" / env_skill / "skillspec.json").resolve()
+            if bundled.exists():
+                return bundled
+        raise SystemExit(
+            f"Skill not found: {env_skill} (from OMNI_SKILL). "
+            "Run from within the neo-skill repo, or pass --spec <path> to a skillspec.json."
+        )
 
     default = repo_root / "skills" / "coding-standards" / "skillspec.json"
     if default.exists():
         return default.resolve()
 
-    specs = sorted((repo_root / "skills").glob("*/skillspec.json"))
+    if bundled_repo_root is not None:
+        bundled_default = bundled_repo_root / "skills" / "coding-standards" / "skillspec.json"
+        if bundled_default.exists():
+            return bundled_default.resolve()
+
+    spec_base_root: Optional[Path]
+    skills_dir = repo_root / "skills"
+    if skills_dir.is_dir():
+        specs = sorted(skills_dir.glob("*/skillspec.json"))
+        spec_base_root = repo_root
+    elif bundled_repo_root is not None:
+        specs = sorted((bundled_repo_root / "skills").glob("*/skillspec.json"))
+        spec_base_root = bundled_repo_root
+    else:
+        specs = []
+        spec_base_root = None
+
     if len(specs) == 1:
         return specs[0].resolve()
 
     if specs:
-        found = "\n- " + "\n- ".join(str(p.relative_to(repo_root)) for p in specs)
+        if spec_base_root is None:
+            found = "\n- " + "\n- ".join(str(p) for p in specs)
+        else:
+            found = "\n- " + "\n- ".join(str(p.relative_to(spec_base_root)) for p in specs)
         raise SystemExit(
             "Multiple skillspec.json found; please pass --skill <name> or --spec <path>. Found:" + found
         )
 
-    raise SystemExit("No skillspec.json found. Run from skills/<skill>/ or pass --spec/--skill.")
+    raise SystemExit(
+        "No skillspec.json found. Run from skills/<skill>/ or pass --spec/--skill. "
+        "(Tip: if you installed omni-skill globally, pass --skill <name> or set OMNI_SKILL/OMNI_SKILL_SPEC.)"
+    )
 
 
 def _run_git(cwd: Path, *args: str) -> None:
