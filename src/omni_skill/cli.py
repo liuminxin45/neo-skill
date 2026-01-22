@@ -127,22 +127,9 @@ def _cmd_run(args: argparse.Namespace) -> int:
 
 
 def _cmd_update(args: argparse.Namespace) -> int:
-    repo_root = _resolve_repo_root(args.repo_root)
-    git_dir = repo_root / ".git"
-
-    if not git_dir.exists():
-        raise SystemExit(
-            f"Not a git repository: {repo_root}\n"
-            "omni-skill update must be run from within the neo-skill repo (or use --repo-root)."
-        )
-
-    print(f"Updating repo: {repo_root}")
-    _run_git(repo_root, "reset", "--hard")
-    _run_git(repo_root, "clean", "-fdx")
-    _run_git(repo_root, "pull")
-    print("Git update complete. Running omni-skill init...")
-
-    return _cmd_run(argparse.Namespace(repo_root=str(repo_root), skill="", spec=""))
+    # Safety: update must never mutate the caller's git repository.
+    # Keep update as a safe alias of init for direct python invocation.
+    return _cmd_run(argparse.Namespace(repo_root=str(_resolve_repo_root(args.repo_root)), skill="", spec=""))
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -159,7 +146,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_init.add_argument("--spec", default="")
     p_init.set_defaults(func=_cmd_run)
 
-    p_update = sub.add_parser("update", help="Git reset/clean/pull current repo then auto-run init")
+    p_update = sub.add_parser("update", help="Safe alias of init (does not touch git)")
     p_update.add_argument("--repo-root", default=".")
     p_update.set_defaults(func=_cmd_update)
 

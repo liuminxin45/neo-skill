@@ -64,6 +64,25 @@ function runUiproCommand(args) {
   return true;
 }
 
+function runNpmSelfUpdate() {
+  if (String(process.env.NEO_SKILLS_SKIP_SELF_UPDATE || "").trim() === "1") {
+    console.log("Skipping npm self-update (NEO_SKILLS_SKIP_SELF_UPDATE=1)");
+    return true;
+  }
+
+  console.log("Updating neo-skills (npm -g) ...");
+  const result = spawnSync("npm", ["install", "-g", "neo-skills@latest"], { stdio: "inherit", shell: true });
+  if (result.error) {
+    console.error("npm self-update failed:", result.error);
+    return false;
+  }
+  if (typeof result.status === "number" && result.status !== 0) {
+    console.error("npm self-update failed with exit code:", result.status);
+    return false;
+  }
+  return true;
+}
+
 function handleInit() {
   const pkgRoot = path.resolve(__dirname, "..");
   const cwd = process.cwd();
@@ -154,20 +173,9 @@ function main() {
   }
 
   if (args[0] === "update") {
-    const pkgRoot = path.resolve(__dirname, "..");
-    const pySrc = path.join(pkgRoot, "src");
-
-    const env = { ...process.env };
-    env.PYTHONPATH = env.PYTHONPATH ? `${pySrc}${path.delimiter}${env.PYTHONPATH}` : pySrc;
-
-    const baseArgs = ["-m", "omni_skill.cli", ...process.argv.slice(2)];
-    const pyStatus = runPythonCommand(baseArgs, env);
-    if (pyStatus !== 0) {
-      process.exit(pyStatus);
-    }
-
-    const uiproStatus = handleUpdate();
-    process.exit(uiproStatus);
+    runNpmSelfUpdate();
+    handleInit();
+    return;
   }
 
   const pkgRoot = path.resolve(__dirname, "..");

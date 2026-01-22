@@ -33,9 +33,11 @@ omni-skill update
 ```
 
 行为说明：
-- 自动清空本地 git 变更（`git reset --hard` + `git clean -fdx`）
-- 拉取最新代码（`git pull`）
-- 自动执行一次 `omni-skill init`（重新生成 `.windsurf/.claude/.cursor/.github` 所有 IDE 入口文件）
+- 更新全局 npm 包（等价于执行 `npm install -g neo-skills@latest`）
+- 自动执行一次 `omni-skill init`（同步/覆盖 `skills/`、`.shared/` 与各 IDE 输出目录，并执行 `uipro init --ai all`）
+
+可选开关：
+- 如需跳过 npm 自更新，可设置环境变量：`NEO_SKILLS_SKIP_SELF_UPDATE=1`
 
 **场景 3：在其他项目中使用 neo-skill 的 skill**
 将 neo-skill 仓库克隆到你的项目中（例如 `vendor/neo-skill/`），然后根据你使用的 IDE，复制对应的入口文件到项目根目录：
