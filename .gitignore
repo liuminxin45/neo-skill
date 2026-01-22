@@ -33,6 +33,13 @@ coverage/
 *.swo
 *~
 
+# AI Assistant generated files (created by init scripts)
+.claude/
+.cursor/
+.windsurf/
+.shared/
+.github/
+
 # OS
 Thumbs.db
 
