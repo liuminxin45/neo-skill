@@ -7,13 +7,37 @@ venv/
 .node_modules/
 node_modules/
 .env
+.env.local
+.env.*.local
 .DS_Store
 
 # build/dist
 /dist/
 /build/
 *.egg-info/
+/lib/
+/.turbo/
+/.nx/
 
 # generated outputs
 reports/
+coverage/
+*.log
+*.tmp
+*.temp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+
+# cache
+.ruff_cache/
+.eslintcache
+.cache/
 
