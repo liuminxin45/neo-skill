@@ -404,8 +404,31 @@ function runPythonCommand(baseArgs, env) {
   return 127;
 }
 
+function printFullHelp() {
+  /* eslint-disable no-console */
+  console.log("usage: omni-skill [-h] {init,update} ...");
+  console.log("");
+  console.log("Short wrapper around skill-creator (generate + validate).");
+  console.log("");
+  console.log("positional arguments:");
+  console.log("  {init,update}");
+  console.log("    init         Generate + validate all IDE outputs");
+  console.log("                 Usage: omni-skill init --ai <target>");
+  console.log("                 Targets: " + getSupportedAis().join("|"));
+  console.log("    update       Safe alias of init (does not touch git)");
+  console.log("");
+  console.log("optional arguments:");
+  console.log("  -h, --help     show this help message and exit");
+  /* eslint-enable no-console */
+}
+
 function main() {
   const args = process.argv.slice(2);
+
+  if (args.length === 0 || args[0] === "-h" || args[0] === "--help") {
+    printFullHelp();
+    process.exit(0);
+  }
 
   const aiParse = parseAiArgs(args);
   if (!aiParse.ok) {
@@ -450,7 +473,16 @@ function main() {
   const env = { ...process.env };
   env.PYTHONPATH = env.PYTHONPATH ? `${pySrc}${path.delimiter}${env.PYTHONPATH}` : pySrc;
 
-  const baseArgs = ["-m", "omni_skill.cli", ...process.argv.slice(2)];
+  const filteredArgs = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--ai") {
+      i++;
+    } else {
+      filteredArgs.push(args[i]);
+    }
+  }
+
+  const baseArgs = ["-m", "omni_skill.cli", ...filteredArgs];
 
   const status = runPythonCommand(baseArgs, env);
   process.exit(status);
