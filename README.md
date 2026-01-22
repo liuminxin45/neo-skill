@@ -96,27 +96,6 @@ omni-skill init --spec skills/coding-standards/skillspec.json
 5. 如果只有一个 skill，自动使用该 skill
 6. 如果有多个 skill，报错并提示可用的 skill 列表
 
-### 无安装回退方案
-```bash
-python -m omni_skill.cli init
-python -m omni_skill.cli update
-```
-
-### 直接调用 skill-creator
-```bash
-# 从仓库根目录执行
-python -m skill_creator.cli generate skills/skill-creator/skillspec.json
-python -m skill_creator.cli validate skills/skill-creator/skillspec.json
-python -m skill_creator.cli package --target claude --skill skill-creator
-```
-
-或使用便捷脚本：
-
-```bash
-python .shared/skill-creator/scripts/generate.py skills/skill-creator/skillspec.json
-python .shared/skill-creator/scripts/validate.py skills/skill-creator/skillspec.json
-python .shared/skill-creator/scripts/package.py --target claude --skill skill-creator
-```
 
 ## Canonical 与生成文件
 
