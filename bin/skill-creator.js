@@ -40,7 +40,7 @@ function main() {
   }
 
   console.error(
-    "Python not found. Please install Python 3 and ensure 'python' works, or set OMNI_SKILL_PYTHON to your interpreter path."
+    "Python not found. Please install Python 3 and ensure 'python' works, or set OMNI_SKILL_PYTHON to your interpreter path.",
   );
   if (lastError) {
     console.error(lastError);
