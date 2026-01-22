@@ -182,6 +182,7 @@ function getAiCopyRules() {
 }
 
 function printInitHelp() {
+  /* eslint-disable no-console */
   const supported = getSupportedAis().join("|");
   console.log("Usage: omni-skill init --ai <target>");
   console.log(`  <target>: ${supported}`);
@@ -192,6 +193,7 @@ function printInitHelp() {
   console.log("  omni-skill init --ai antigravity");
   console.log("  omni-skill init --ai copilot");
   console.log("  omni-skill init --ai all");
+  /* eslint-enable no-console */
 }
 
 function copyDirRecursive(src, dest) {
@@ -242,6 +244,7 @@ function runUiproCommand(args) {
   if (result.error) {
     const msg = String(result.error.message || "").toLowerCase();
     if (msg.includes("enoent")) {
+      /* eslint-disable-next-line no-console */
       console.log("\nNote: uipro-cli not found. Run 'npm install -g uipro-cli' to install it.");
       return false;
     }
@@ -256,10 +259,12 @@ function runUiproCommand(args) {
 
 function runNpmSelfUpdate() {
   if (String(process.env.NEO_SKILLS_SKIP_SELF_UPDATE || "").trim() === "1") {
+    /* eslint-disable-next-line no-console */
     console.log("Skipping npm self-update (NEO_SKILLS_SKIP_SELF_UPDATE=1)");
     return true;
   }
 
+  /* eslint-disable-next-line no-console */
   console.log("Updating neo-skills (npm -g) ...");
   const result = spawnSync("npm", ["install", "-g", "neo-skills@latest"], { stdio: "inherit", shell: true });
   if (result.error) {
@@ -273,19 +278,11 @@ function runNpmSelfUpdate() {
   return true;
 }
 
-function handleInit(selectedAis, mode) {
-  const pkgRoot = path.resolve(__dirname, "..");
-  const cwd = process.cwd();
-  const version = readPackageVersion(pkgRoot);
-  const aiRules = getAiCopyRules();
-
-  const effectiveAis = selectedAis.length ? selectedAis : getSupportedAis().filter((x) => x !== "all");
-
+function buildSyncPairs(effectiveAis, aiRules) {
   const syncPairs = [
     { src: "skills", dest: "skills" },
     { src: path.join(".shared", "skill-creator"), dest: path.join(".shared", "skill-creator") },
   ];
-
   for (const ai of effectiveAis) {
     const r = aiRules[ai];
     if (r) {
@@ -294,31 +291,64 @@ function handleInit(selectedAis, mode) {
       }
     }
   }
+  return syncPairs;
+}
 
-  console.log("Initializing skills in:", cwd);
-
+function performSync(pkgRoot, cwd, syncPairs) {
   for (const p of syncPairs) {
     const src = path.join(pkgRoot, p.src);
     const dest = path.join(cwd, p.dest);
-
     if (!fs.existsSync(src)) {
+      /* eslint-disable-next-line no-console */
       console.log(`  Skipping ${p.dest} (not found in package)`);
       continue;
     }
-
+    /* eslint-disable-next-line no-console */
     console.log(`  Syncing ${p.dest} (replace items)`);
     syncDirReplace(src, dest);
   }
+}
 
+function writeVersionFiles(cwd, effectiveAis, aiRules, version) {
   for (const ai of effectiveAis) {
     const r = aiRules[ai];
     if (!r) continue;
     for (const baseDir of r.baseDirs) {
-      const destBaseDir = path.join(cwd, baseDir);
-      writeVersionFile(destBaseDir, version);
+      writeVersionFile(path.join(cwd, baseDir), version);
     }
   }
+}
 
+function runUiproForAis(effectiveAis, mode) {
+  if (mode === "update") {
+    for (const ai of effectiveAis) {
+      const ok = runUiproCommand(["update", "--ai", ai]);
+      if (!ok) {
+        /* eslint-disable-next-line no-console */
+        console.log(`uipro update failed for --ai ${ai}; trying init...`);
+        runUiproCommand(["init", "--ai", ai]);
+      }
+    }
+  } else {
+    for (const ai of effectiveAis) {
+      runUiproCommand(["init", "--ai", ai]);
+    }
+  }
+}
+
+function handleInit(selectedAis, mode) {
+  const pkgRoot = path.resolve(__dirname, "..");
+  const cwd = process.cwd();
+  const version = readPackageVersion(pkgRoot);
+  const aiRules = getAiCopyRules();
+  const effectiveAis = selectedAis.length ? selectedAis : getSupportedAis().filter((x) => x !== "all");
+
+  const syncPairs = buildSyncPairs(effectiveAis, aiRules);
+  /* eslint-disable-next-line no-console */
+  console.log("Initializing skills in:", cwd);
+  performSync(pkgRoot, cwd, syncPairs);
+  writeVersionFiles(cwd, effectiveAis, aiRules, version);
+  /* eslint-disable-next-line no-console */
   console.log("\nDone! neo-skills have been initialized.");
 
   if (mode === "init") {
@@ -326,28 +356,15 @@ function handleInit(selectedAis, mode) {
   }
 
   if (String(process.env.NEO_SKILLS_SKIP_UIPRO_INIT || "").trim() === "1") {
+    /* eslint-disable-next-line no-console */
     console.log("\nSkipping uipro init/update (NEO_SKILLS_SKIP_UIPRO_INIT=1)");
     return;
   }
 
   const verb = mode === "update" ? "update" : "init";
-
-  if (mode === "update") {
-    console.log("\nRunning uipro update...");
-    for (const ai of effectiveAis) {
-      const ok = runUiproCommand(["update", "--ai", ai]);
-      if (!ok) {
-        console.log(`uipro update failed for --ai ${ai}; trying init...`);
-        runUiproCommand(["init", "--ai", ai]);
-      }
-    }
-    return;
-  }
-
+  /* eslint-disable-next-line no-console */
   console.log(`\nRunning uipro ${verb}...`);
-  for (const ai of effectiveAis) {
-    runUiproCommand(["init", "--ai", ai]);
-  }
+  runUiproForAis(effectiveAis, mode);
 }
 
 function runPythonCommand(baseArgs, env) {

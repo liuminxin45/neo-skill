@@ -64,17 +64,8 @@ jobs:
           node --check bin/omni-skill.js
           node --check bin/skill-creator.js
 
-      - name: ESLint
-        run: npm run lint
-
-      - name: Prettier (check)
-        run: npm run format:check
-
-      - name: Depcheck
-        run: npm run depcheck
-
-      - name: Boundary (dependency-cruiser)
-        run: npm run boundary
+      - name: Hard Gate (format + lint + boundary + depcheck)
+        run: npm run gate
 
       - name: npm pack
         run: npm pack
