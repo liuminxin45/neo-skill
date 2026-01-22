@@ -13,6 +13,7 @@ def main(argv: list[str]) -> int:
     add_src_to_path()
     from skill_creator.cli import cmd_validate  # type: ignore
     import argparse
+
     args = argparse.Namespace(repo_root=str(repo_root()), spec=spec_path)
     return cmd_validate(args)
 

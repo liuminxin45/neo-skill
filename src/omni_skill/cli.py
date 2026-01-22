@@ -97,9 +97,7 @@ def _resolve_spec_path(repo_root: Path, args: argparse.Namespace) -> Path:
             found = "\n- " + "\n- ".join(str(p) for p in specs)
         else:
             found = "\n- " + "\n- ".join(str(p.relative_to(spec_base_root)) for p in specs)
-        raise SystemExit(
-            "Multiple skillspec.json found; please pass --skill <name> or --spec <path>. Found:" + found
-        )
+        raise SystemExit("Multiple skillspec.json found; please pass --skill <name> or --spec <path>. Found:" + found)
 
     raise SystemExit(
         "No skillspec.json found. Run from skills/<skill>/ or pass --spec/--skill. "

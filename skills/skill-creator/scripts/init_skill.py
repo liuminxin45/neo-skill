@@ -21,7 +21,7 @@ def main() -> int:
     # Usage:
     #   python3 skills/skill-creator/scripts/init_skill.py <skill-name> [--description "..."]
     if len(sys.argv) < 2:
-        print("Usage: python3 skills/skill-creator/scripts/init_skill.py <skill-name> [--description \"...\"]")
+        print('Usage: python3 skills/skill-creator/scripts/init_skill.py <skill-name> [--description "..."]')
         return 2
     _add_src_to_path()
     name = sys.argv[1]

@@ -150,21 +150,21 @@ def cmd_generate(args: argparse.Namespace) -> int:
 
 def _validate_claude_frontmatter(skill_md: Path) -> List[str]:
     # Strict: frontmatter must contain only name + description.
-    txt = skill_md.read_text(encoding='utf-8')
-    if not txt.startswith('---\n'):
+    txt = skill_md.read_text(encoding="utf-8")
+    if not txt.startswith("---\n"):
         return [f"Missing YAML frontmatter: {skill_md}"]
     try:
-        end = txt.index('\n---\n', 4)
+        end = txt.index("\n---\n", 4)
     except ValueError:
         return [f"Unterminated YAML frontmatter: {skill_md}"]
     fm = txt[4:end].strip().splitlines()
     keys = []
     for line in fm:
-        if not line.strip() or line.strip().startswith('#'):
+        if not line.strip() or line.strip().startswith("#"):
             continue
-        if ':' not in line:
+        if ":" not in line:
             continue
-        keys.append(line.split(':', 1)[0].strip())
+        keys.append(line.split(":", 1)[0].strip())
     missing = [k for k in ["name", "description"] if k not in keys]
     extra = [k for k in keys if k not in {"name", "description"}]
     errs = []
