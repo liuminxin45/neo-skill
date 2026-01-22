@@ -4,6 +4,196 @@ const { spawnSync } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
+const STATE_FILE = ".neo-skills.json";
+
+function readPackageVersion(pkgRoot) {
+  try {
+    const pkgJsonPath = path.join(pkgRoot, "package.json");
+    const raw = fs.readFileSync(pkgJsonPath, "utf-8");
+    const pkg = JSON.parse(raw);
+    return String(pkg.version || "").trim() || "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
+function ensureDir(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+}
+
+function writeVersionFile(destBaseDir, version) {
+  ensureDir(destBaseDir);
+  fs.writeFileSync(path.join(destBaseDir, "VERSION"), `${version}\n`, "utf-8");
+}
+
+function writeInitState(cwd, selectedAis) {
+  try {
+    const statePath = path.join(cwd, STATE_FILE);
+    const payload = {
+      ais: selectedAis,
+    };
+    fs.writeFileSync(statePath, JSON.stringify(payload, null, 2) + "\n", "utf-8");
+  } catch {
+    // best effort
+  }
+}
+
+function readInitState(cwd) {
+  const statePath = path.join(cwd, STATE_FILE);
+  if (!fs.existsSync(statePath)) {
+    return { ok: false, error: `Missing ${STATE_FILE}. Please run: omni-skill init --ai <target>` };
+  }
+  try {
+    const raw = fs.readFileSync(statePath, "utf-8");
+    const parsed = JSON.parse(raw);
+    const ais = Array.isArray(parsed.ais) ? parsed.ais.map(normalizeAiValue).filter(Boolean) : [];
+    const resolved = resolveSelectedAis(ais);
+    if (!resolved.ok) return resolved;
+    if (resolved.selected.length === 0) {
+      return { ok: false, error: `Invalid ${STATE_FILE}: ais is empty. Please re-run init.` };
+    }
+    return { ok: true, selected: resolved.selected };
+  } catch {
+    return { ok: false, error: `Invalid ${STATE_FILE}. Please delete it and re-run init.` };
+  }
+}
+
+function normalizeAiValue(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function parseAiArgs(args) {
+  const out = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--ai") {
+      const v = normalizeAiValue(args[i + 1]);
+      if (!v) return { ok: false, error: "Missing value for --ai" };
+      out.push(v);
+      i++;
+    }
+  }
+  return { ok: true, values: out };
+}
+
+function getSupportedAis() {
+  return [
+    "claude",
+    "cursor",
+    "windsurf",
+    "antigravity",
+    "copilot",
+    "kiro",
+    "codex",
+    "qoder",
+    "roocode",
+    "gemini",
+    "trae",
+    "opencode",
+    "continue",
+    "all",
+  ];
+}
+
+function resolveSelectedAis(aiValues) {
+  const supported = new Set(getSupportedAis());
+
+  if (aiValues.length === 0) {
+    return { ok: true, selected: [] };
+  }
+
+  for (const v of aiValues) {
+    if (!supported.has(v)) {
+      return { ok: false, error: `Unknown --ai value: ${v}` };
+    }
+  }
+
+  if (aiValues.includes("all")) {
+    return {
+      ok: true,
+      selected: getSupportedAis().filter((x) => x !== "all"),
+    };
+  }
+
+  return { ok: true, selected: Array.from(new Set(aiValues)) };
+}
+
+function getAiCopyRules() {
+  return {
+    claude: {
+      syncPairs: [{ src: path.join(".claude", "skills"), dest: path.join(".claude", "skills") }],
+      baseDirs: [".claude"],
+    },
+    windsurf: {
+      syncPairs: [{ src: path.join(".windsurf", "workflows"), dest: path.join(".windsurf", "workflows") }],
+      baseDirs: [".windsurf"],
+    },
+    cursor: {
+      syncPairs: [{ src: path.join(".cursor", "commands"), dest: path.join(".cursor", "commands") }],
+      baseDirs: [".cursor"],
+    },
+    copilot: {
+      syncPairs: [{ src: path.join(".github", "skills"), dest: path.join(".github", "skills") }],
+      baseDirs: [".github"],
+    },
+    antigravity: {
+      syncPairs: [
+        { src: ".agent", dest: ".agent" },
+        { src: ".shared", dest: ".shared" },
+      ],
+      baseDirs: [".agent", ".shared"],
+    },
+    kiro: {
+      syncPairs: [{ src: ".kiro", dest: ".kiro" }],
+      baseDirs: [".kiro"],
+    },
+    codex: {
+      syncPairs: [{ src: ".codex", dest: ".codex" }],
+      baseDirs: [".codex"],
+    },
+    qoder: {
+      syncPairs: [{ src: ".qoder", dest: ".qoder" }],
+      baseDirs: [".qoder"],
+    },
+    roocode: {
+      syncPairs: [{ src: ".roocode", dest: ".roocode" }],
+      baseDirs: [".roocode"],
+    },
+    gemini: {
+      syncPairs: [{ src: ".gemini", dest: ".gemini" }],
+      baseDirs: [".gemini"],
+    },
+    trae: {
+      syncPairs: [{ src: ".trae", dest: ".trae" }],
+      baseDirs: [".trae"],
+    },
+    opencode: {
+      syncPairs: [{ src: ".opencode", dest: ".opencode" }],
+      baseDirs: [".opencode"],
+    },
+    continue: {
+      syncPairs: [{ src: ".continue", dest: ".continue" }],
+      baseDirs: [".continue"],
+    },
+  };
+}
+
+function printInitHelp() {
+  const supported = getSupportedAis().join("|");
+  console.log("Usage: omni-skill init --ai <target>");
+  console.log(`  <target>: ${supported}`);
+  console.log("Examples:");
+  console.log("  omni-skill init --ai claude");
+  console.log("  omni-skill init --ai cursor");
+  console.log("  omni-skill init --ai windsurf");
+  console.log("  omni-skill init --ai antigravity");
+  console.log("  omni-skill init --ai copilot");
+  console.log("  omni-skill init --ai all");
+}
+
 function copyDirRecursive(src, dest) {
   if (!fs.existsSync(src)) return;
 
@@ -83,18 +273,27 @@ function runNpmSelfUpdate() {
   return true;
 }
 
-function handleInit() {
+function handleInit(selectedAis, mode) {
   const pkgRoot = path.resolve(__dirname, "..");
   const cwd = process.cwd();
+  const version = readPackageVersion(pkgRoot);
+  const aiRules = getAiCopyRules();
+
+  const effectiveAis = selectedAis.length ? selectedAis : getSupportedAis().filter((x) => x !== "all");
 
   const syncPairs = [
     { src: "skills", dest: "skills" },
     { src: path.join(".shared", "skill-creator"), dest: path.join(".shared", "skill-creator") },
-    { src: path.join(".claude", "skills"), dest: path.join(".claude", "skills") },
-    { src: path.join(".windsurf", "workflows"), dest: path.join(".windsurf", "workflows") },
-    { src: path.join(".cursor", "commands"), dest: path.join(".cursor", "commands") },
-    { src: path.join(".github", "skills"), dest: path.join(".github", "skills") },
   ];
+
+  for (const ai of effectiveAis) {
+    const r = aiRules[ai];
+    if (r) {
+      for (const p of r.syncPairs) {
+        syncPairs.push(p);
+      }
+    }
+  }
 
   console.log("Initializing skills in:", cwd);
 
@@ -111,15 +310,44 @@ function handleInit() {
     syncDirReplace(src, dest);
   }
 
+  for (const ai of effectiveAis) {
+    const r = aiRules[ai];
+    if (!r) continue;
+    for (const baseDir of r.baseDirs) {
+      const destBaseDir = path.join(cwd, baseDir);
+      writeVersionFile(destBaseDir, version);
+    }
+  }
+
   console.log("\nDone! neo-skills have been initialized.");
 
+  if (mode === "init") {
+    writeInitState(cwd, selectedAis);
+  }
+
   if (String(process.env.NEO_SKILLS_SKIP_UIPRO_INIT || "").trim() === "1") {
-    console.log("\nSkipping uipro init (NEO_SKILLS_SKIP_UIPRO_INIT=1)");
+    console.log("\nSkipping uipro init/update (NEO_SKILLS_SKIP_UIPRO_INIT=1)");
     return;
   }
 
-  console.log("\nRunning uipro init --ai all...");
-  runUiproCommand(["init", "--ai", "all"]);
+  const verb = mode === "update" ? "update" : "init";
+
+  if (mode === "update") {
+    console.log("\nRunning uipro update...");
+    for (const ai of effectiveAis) {
+      const ok = runUiproCommand(["update", "--ai", ai]);
+      if (!ok) {
+        console.log(`uipro update failed for --ai ${ai}; trying init...`);
+        runUiproCommand(["init", "--ai", ai]);
+      }
+    }
+    return;
+  }
+
+  console.log(`\nRunning uipro ${verb}...`);
+  for (const ai of effectiveAis) {
+    runUiproCommand(["init", "--ai", ai]);
+  }
 }
 
 function runPythonCommand(baseArgs, env) {
@@ -162,14 +390,40 @@ function runPythonCommand(baseArgs, env) {
 function main() {
   const args = process.argv.slice(2);
 
+  const aiParse = parseAiArgs(args);
+  if (!aiParse.ok) {
+    console.error(aiParse.error);
+    process.exit(1);
+  }
+  const aiResolve = resolveSelectedAis(aiParse.values);
+  if (!aiResolve.ok) {
+    console.error(aiResolve.error);
+    printInitHelp();
+    process.exit(1);
+  }
+
   if (args[0] === "init") {
-    handleInit();
+    if (aiResolve.selected.length === 0) {
+      printInitHelp();
+      process.exit(1);
+    }
+    handleInit(aiResolve.selected, "init");
     return;
   }
 
   if (args[0] === "update") {
+    if (args.length > 1 || aiParse.values.length > 0) {
+      console.error("omni-skill update does not accept any arguments.");
+      process.exit(1);
+    }
     runNpmSelfUpdate();
-    handleInit();
+    const cwd = process.cwd();
+    const state = readInitState(cwd);
+    if (!state.ok) {
+      console.error(state.error);
+      process.exit(1);
+    }
+    handleInit(state.selected, "update");
     return;
   }
 
