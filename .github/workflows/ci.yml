@@ -53,6 +53,11 @@ jobs:
       - name: Ensure bin scripts executable
         run: chmod +x bin/*.js
 
+      - name: Node syntax check
+        run: |
+          node --check bin/omni-skill.js
+          node --check bin/skill-creator.js
+
       - name: npm pack
         run: npm pack
 
