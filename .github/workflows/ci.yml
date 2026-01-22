@@ -27,6 +27,9 @@ jobs:
       - name: Ruff (lint)
         run: ruff check .
 
+      - name: Ruff (format)
+        run: ruff format --check .
+
       - name: Mypy (typecheck)
         run: mypy
 
@@ -50,6 +53,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install (npm ci)
+        run: npm ci --ignore-scripts
+
       - name: Ensure bin scripts executable
         run: chmod +x bin/*.js
 
@@ -57,6 +63,18 @@ jobs:
         run: |
           node --check bin/omni-skill.js
           node --check bin/skill-creator.js
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Prettier (check)
+        run: npm run format:check
+
+      - name: Depcheck
+        run: npm run depcheck
+
+      - name: Boundary (dependency-cruiser)
+        run: npm run boundary
 
       - name: npm pack
         run: npm pack

@@ -21,7 +21,18 @@
     "pyproject.toml"
   ],
   "scripts": {
+    "lint": "eslint \"bin/*.js\"",
+    "format": "prettier --write \"bin/*.js\" \".eslintrc.cjs\" \".prettierrc.json\"",
+    "format:check": "prettier --check \"bin/*.js\" \".eslintrc.cjs\" \".prettierrc.json\"",
+    "boundary": "depcruise --config .dependency-cruiser.js bin",
+    "depcheck": "depcheck --ignores=depcheck,dependency-cruiser,eslint,prettier",
     "postinstall": "node -e \"process.env.NEO_SKILLS_SKIP_UIPRO_INSTALL==='1'?process.exit(0):process.exit(require('child_process').spawnSync('npm',['install','-g','uipro-cli'],{stdio:'inherit',shell:true}).status||0)\""
+  },
+  "devDependencies": {
+    "depcheck": "^1.4.7",
+    "dependency-cruiser": "^16.6.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5"
   },
   "engines": {
     "node": ">=16"

@@ -122,11 +122,6 @@ function handleInit() {
   runUiproCommand(["init", "--ai", "all"]);
 }
 
-function handleUpdate() {
-  console.log("Running uipro update...");
-  return runUiproCommand(["update"]) ? 0 : 1;
-}
-
 function runPythonCommand(baseArgs, env) {
   const candidates = [];
   if (env.OMNI_SKILL_PYTHON) {
@@ -156,7 +151,7 @@ function runPythonCommand(baseArgs, env) {
   }
 
   console.error(
-    "Python not found. Please install Python 3 and ensure 'python' works, or set OMNI_SKILL_PYTHON to your interpreter path."
+    "Python not found. Please install Python 3 and ensure 'python' works, or set OMNI_SKILL_PYTHON to your interpreter path.",
   );
   if (lastError) {
     console.error(lastError);

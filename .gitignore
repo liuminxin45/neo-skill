@@ -4,6 +4,8 @@ __pycache__/
 *.pyd
 .venv/
 venv/
+.node_modules/
+node_modules/
 .env
 .DS_Store
 
@@ -15,4 +17,3 @@ venv/
 # generated outputs
 reports/
 
-package-lock.json
