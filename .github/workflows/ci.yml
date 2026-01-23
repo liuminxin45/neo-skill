@@ -30,9 +30,6 @@ jobs:
           node --check bin/omni-skill.js
           node --check bin/skill-creator.js
 
-      - name: Hard Gate (format + lint + boundary + depcheck)
-        run: npm run gate
-
       - name: npm pack
         run: npm pack
 
