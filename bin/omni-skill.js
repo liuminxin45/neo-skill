@@ -298,6 +298,11 @@ function performSync(pkgRoot, cwd, syncPairs) {
   for (const p of syncPairs) {
     const src = path.join(pkgRoot, p.src);
     const dest = path.join(cwd, p.dest);
+    if (path.resolve(src) === path.resolve(dest)) {
+      /* eslint-disable-next-line no-console */
+      console.log(`  Skipping ${p.dest} (source equals destination)`);
+      continue;
+    }
     if (!fs.existsSync(src)) {
       /* eslint-disable-next-line no-console */
       console.log(`  Skipping ${p.dest} (not found in package)`);
@@ -347,6 +352,7 @@ function handleInit(selectedAis, mode) {
   /* eslint-disable-next-line no-console */
   console.log("Initializing skills in:", cwd);
   performSync(pkgRoot, cwd, syncPairs);
+  generateOutputsBestEffort(pkgRoot, cwd, effectiveAis);
   writeVersionFiles(cwd, effectiveAis, aiRules, version);
   /* eslint-disable-next-line no-console */
   console.log("\nDone! neo-skills have been initialized.");
@@ -402,6 +408,46 @@ function runPythonCommand(baseArgs, env) {
     console.error(lastError);
   }
   return 127;
+}
+
+function listSkillSpecPaths(repoRoot) {
+  const skillsDir = path.join(repoRoot, "skills");
+  if (!fs.existsSync(skillsDir)) return [];
+  const entries = fs.readdirSync(skillsDir, { withFileTypes: true });
+  const out = [];
+  for (const e of entries) {
+    if (!e.isDirectory()) continue;
+    const p = path.join(skillsDir, e.name, "skillspec.json");
+    if (fs.existsSync(p)) out.push(p);
+  }
+  return out;
+}
+
+function generateOutputsBestEffort(pkgRoot, cwd, effectiveAis) {
+  if (!effectiveAis.includes("windsurf")) return;
+
+  const specs = listSkillSpecPaths(cwd);
+  if (specs.length === 0) return;
+
+  const pySrc = path.join(pkgRoot, "src");
+  const env = { ...process.env };
+  env.PYTHONPATH = env.PYTHONPATH ? `${pySrc}${path.delimiter}${env.PYTHONPATH}` : pySrc;
+
+  /* eslint-disable-next-line no-console */
+  console.log("\nGenerating Windsurf workflows from skillspec.json ...");
+  for (const specPath of specs) {
+    const baseArgs = ["-m", "skill_creator.cli", "--repo-root", cwd, "generate", specPath];
+    const status = runPythonCommand(baseArgs, env);
+    if (status !== 0) {
+      /* eslint-disable-next-line no-console */
+      console.log(`  Skipping generator for ${path.relative(cwd, specPath)} (exit ${status})`);
+      /* eslint-disable-next-line no-console */
+      console.log(
+        "  Note: Python 3 is required to generate .windsurf/workflows/*.md and workflow data. You can also set OMNI_SKILL_PYTHON.",
+      );
+      return;
+    }
+  }
 }
 
 function printFullHelp() {
