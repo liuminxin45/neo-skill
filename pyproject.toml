@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "neo-skill"
-version = "0.1.11"
+dynamic = ["version"]
 description = "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec."
 requires-python = ">=3.8"
 license = {text = "MIT"}
@@ -15,4 +15,7 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "skill_creator.__version__"}
 
