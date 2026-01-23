@@ -7,22 +7,57 @@ on:
   pull_request:
 
 jobs:
-  python-test:
+  npm-pack:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          python-version: "3.11"
+          node-version: "20"
 
-      - name: Install package
-        run: pip install -e .
+      - name: Install dependencies
+        run: npm install --ignore-scripts
 
-      - name: Validate installation
+      - name: npm pack
+        run: npm pack
+
+  npm-publish:
+    runs-on: ubuntu-latest
+    needs: npm-pack
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Read package metadata
+        id: pkg
         run: |
-          python -c "import skill_creator; print('skill_creator imported successfully')"
-          python -c "import omni_skill; print('omni_skill imported successfully')"
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version already published
+        id: published
+        run: |
+          if npm view "${{ steps.pkg.outputs.name }}@${{ steps.pkg.outputs.version }}" version >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish
+        if: steps.published.outputs.exists != 'true'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
