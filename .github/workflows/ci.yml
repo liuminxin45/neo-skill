@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install (npm ci)
-        run: npm ci --ignore-scripts
+      - name: Install dependencies
+        run: npm install --ignore-scripts
 
       - name: Ensure bin scripts executable
         run: chmod +x bin/*.js

@@ -1,6 +1,18 @@
-# ai-skill-creator（多 AI 助手技能生成器）
+# neo-skills（多 AI 助手技能生成器）
 
 一个确定性的 **skill-creator** 仓库。
+
+**GitHub**: https://github.com/liuminxin45/neo-skill
+
+## 安装
+
+```bash
+# 全局安装
+npm install -g neo-skills
+
+# 或使用最新版本
+npm install -g neo-skills@latest
+```
 
 ## 功能说明
 - 使用 canonical `skills/<skill>/skillspec.json` 作为单一真源（single source of truth）
@@ -11,6 +23,17 @@
   - GitHub / VS Code Skills: `.github/skills/<skill>/SKILL.md` + resources
 - 校验生成的 `SKILL.md` 是否符合 Claude 严格的元数据规则
 - 打包 Claude `.skill`（zip 格式，符合正确的根目录结构）
+
+## 支持的 Skills
+
+| Skill 名称 | 描述 | 来源 | 用法 |
+|-----------|------|------|------|
+| **skill-creator** | 对话式收集需求，生成可在多 AI Assistant 运行的技能包 | 内置 | `omni-skill init --skill skill-creator` |
+| **review-gate** | 建立架构与工程化 PR Review 规范，提供可执行的 Review Checklist | 内置 | `omni-skill init --skill review-gate` |
+
+**触发示例**：
+- skill-creator: "我想做一个 skill"、"帮我生成 SKILL.md"、"把我的 prompt 工作流变成 skill"
+- review-gate: "我想建立 PR Review 架构规范检查点"、"帮我生成 PR Review Checklist 模板"、"软评审代码"
 
 ## 快速开始
 

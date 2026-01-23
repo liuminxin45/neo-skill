@@ -48,3 +48,6 @@ Thumbs.db
 .eslintcache
 .cache/
 
+# lock files (npm package project)
+package-lock.json
+
