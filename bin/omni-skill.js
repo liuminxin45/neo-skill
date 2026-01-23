@@ -424,8 +424,6 @@ function listSkillSpecPaths(repoRoot) {
 }
 
 function generateOutputsBestEffort(pkgRoot, cwd, effectiveAis) {
-  if (!effectiveAis.includes("windsurf")) return;
-
   const specs = listSkillSpecPaths(cwd);
   if (specs.length === 0) return;
 
@@ -434,7 +432,7 @@ function generateOutputsBestEffort(pkgRoot, cwd, effectiveAis) {
   env.PYTHONPATH = env.PYTHONPATH ? `${pySrc}${path.delimiter}${env.PYTHONPATH}` : pySrc;
 
   /* eslint-disable-next-line no-console */
-  console.log("\nGenerating Windsurf workflows from skillspec.json ...");
+  console.log("\nGenerating skill outputs from skillspec.json ...");
   for (const specPath of specs) {
     const baseArgs = ["-m", "skill_creator.cli", "--repo-root", cwd, "generate", specPath];
     const status = runPythonCommand(baseArgs, env);
@@ -443,7 +441,7 @@ function generateOutputsBestEffort(pkgRoot, cwd, effectiveAis) {
       console.log(`  Skipping generator for ${path.relative(cwd, specPath)} (exit ${status})`);
       /* eslint-disable-next-line no-console */
       console.log(
-        "  Note: Python 3 is required to generate .windsurf/workflows/*.md and workflow data. You can also set OMNI_SKILL_PYTHON.",
+        "  Note: Python 3 is required to generate skill outputs (.windsurf/workflows/*.md, .claude/skills/*, etc.). You can also set OMNI_SKILL_PYTHON.",
       );
       return;
     }
