@@ -380,6 +380,7 @@ function runPythonCommand(baseArgs, env) {
   }
   if (process.platform === "win32") {
     candidates.push({ cmd: "python", extraArgs: [] });
+    candidates.push({ cmd: "python3", extraArgs: [] });
     candidates.push({ cmd: "py", extraArgs: ["-3"] });
   } else {
     candidates.push({ cmd: "python3", extraArgs: [] });
@@ -397,6 +398,9 @@ function runPythonCommand(baseArgs, env) {
       }
       console.error(r.error);
       return 1;
+    }
+    if (typeof r.status === "number" && r.status === 9009) {
+      continue;
     }
     return r.status == null ? 1 : r.status;
   }
