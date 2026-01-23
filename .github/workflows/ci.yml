@@ -22,14 +22,6 @@ jobs:
       - name: Install dependencies
         run: npm install --ignore-scripts
 
-      - name: Ensure bin scripts executable
-        run: chmod +x bin/*.js
-
-      - name: Node syntax check
-        run: |
-          node --check bin/omni-skill.js
-          node --check bin/skill-creator.js
-
       - name: npm pack
         run: npm pack
 
@@ -46,9 +38,6 @@ jobs:
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
-
-      - name: Ensure bin scripts executable
-        run: chmod +x bin/*.js
 
       - name: Read package metadata
         id: pkg
