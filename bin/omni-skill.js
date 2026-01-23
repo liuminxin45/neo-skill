@@ -352,7 +352,7 @@ function handleInit(selectedAis, mode) {
   /* eslint-disable-next-line no-console */
   console.log("Initializing skills in:", cwd);
   performSync(pkgRoot, cwd, syncPairs);
-  generateOutputsBestEffort(pkgRoot, cwd, effectiveAis);
+  generateOutputsBestEffort(pkgRoot, cwd);
   writeVersionFiles(cwd, effectiveAis, aiRules, version);
   /* eslint-disable-next-line no-console */
   console.log("\nDone! neo-skills have been initialized.");
@@ -423,7 +423,7 @@ function listSkillSpecPaths(repoRoot) {
   return out;
 }
 
-function generateOutputsBestEffort(pkgRoot, cwd, effectiveAis) {
+function generateOutputsBestEffort(pkgRoot, cwd) {
   const specs = listSkillSpecPaths(cwd);
   if (specs.length === 0) return;
 
