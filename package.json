@@ -3,12 +3,7 @@
   "version": "0.1.11",
   "description": "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec.",
   "license": "MIT",
-  "bin": {
-    "omni-skill": "bin/omni-skill.js",
-    "skill-creator": "bin/skill-creator.js"
-  },
   "files": [
-    "bin/**",
     "src/**",
     "skills/**",
     ".shared/**",

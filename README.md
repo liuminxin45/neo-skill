@@ -4,14 +4,22 @@
 
 **GitHub**: https://github.com/liuminxin45/neo-skill
 
-## 安装
+## 使用方式
+
+**前置依赖**：需要安装 Python 3.8+
+
+### 直接运行 Python 模块
 
 ```bash
-# 全局安装
-npm install -g neo-skill
-```
+# 初始化技能
+python -m omni_skill.cli init --ai claude
 
-**前置依赖**：需要安装 Python 3.8+（命令行执行依赖 Python）
+# 生成技能输出
+python -m skill_creator.cli generate skills/skill-name/skillspec.json
+
+# 验证技能
+python -m skill_creator.cli validate skills/skill-name/skillspec.json
+```
 
 ## 功能说明
 - 使用 canonical `skills/<skill>/skillspec.json` 作为单一真源（single source of truth）
@@ -38,64 +46,35 @@ npm install -g neo-skill
 
 ### 典型使用场景
 
-**场景 1：在 neo-skill 仓库内开发/维护 skill**
+### 使用场景
+
+**初始化技能文件**
 ```bash
-# 从仓库根目录执行，初始化指定 AI 助手的技能文件
-omni-skill init --ai claude
-omni-skill init --ai windsurf
-omni-skill init --ai all  # 初始化所有支持的 AI 助手
-```
-
-**场景 2：在 neo-skill 仓库内更新并重新生成所有 IDE 入口文件**
-在 neo-skill 仓库根目录执行：
-
-```bash
-omni-skill update
-```
-
-行为说明：
-- 根据上次 init 时保存的 AI 目标，重新同步/生成所有入口文件
-
-**场景 3：在其他项目中使用 neo-skill 的 skill**
-将 neo-skill 仓库克隆到你的项目中（例如 `vendor/neo-skill/`），然后根据你使用的 IDE，复制对应的入口文件到项目根目录：
-- **Windsurf**：复制 `.windsurf/workflows/<skill>.md` 和 `.windsurf/workflows/data/`
-- **Cursor**：复制 `.cursor/commands/<skill>.md`
-- **Claude Desktop**：复制 `.claude/skills/<skill>/`
-- **GitHub / VS Code Skills**：复制 `.github/skills/<skill>/`
-
-### 推荐用法
-
-```bash
-# 初始化指定 AI 助手
-omni-skill init --ai claude
-omni-skill init --ai windsurf --ai cursor  # 可指定多个
-
-# 初始化所有支持的 AI 助手
-omni-skill init --ai all
+# 初始化指定 AI 助手的技能文件
+python -m omni_skill.cli init --ai claude
+python -m omni_skill.cli init --ai windsurf
+python -m omni_skill.cli init --ai all  # 初始化所有支持的 AI 助手
 
 # 更新（基于上次 init 的配置）
-omni-skill update
+python -m omni_skill.cli update
 ```
 
-### 关于 npm 安装后的 init 行为
+**生成和验证技能**
+```bash
+# 生成技能输出
+python -m skill_creator.cli generate skills/skill-name/skillspec.json
 
-当你通过 `npm install -g neo-skill` 安装后：
+# 验证技能
+python -m skill_creator.cli validate skills/skill-name/skillspec.json
 
-- **命令来源**：`omni-skill` 和 `skill-creator` 命令来自全局 npm 包（内部调用 Python）
-- **同步内容**：`omni-skill init` 会把包内的技能/资源内容同步到当前项目目录（覆盖式同步）：
-  - `skills/`
-  - `.shared/skill-creator/`
-  - 以及指定 AI 对应的目录（如 `.claude/skills/`、`.windsurf/workflows/` 等）
+# 打包 Claude 技能
+python -m skill_creator.cli package --target claude --skill skill-name
+```
 
-**核心行为：**
-- 根据 `--ai` 参数生成对应 IDE 的入口文件
-- 不同 IDE 可以共存，切换 IDE 时无需重新生成
-- 生成的文件都是从 canonical `skills/<skill>/skillspec.json` 渲染而来
-
-**参数说明：**
-- `init`：初始化技能文件
-- `update`：基于上次 init 保存的配置重新同步
-- `--ai <target>`：指定目标 AI 助手（可重复使用）
+**在其他项目中使用**
+将 neo-skill 仓库克隆到你的项目中（例如 `vendor/neo-skill/`），然后：
+1. 设置 PYTHONPATH：`export PYTHONPATH=$PWD/vendor/neo-skill/src:$PYTHONPATH`
+2. 运行命令：`python -m omni_skill.cli init --ai claude`
 
 **支持的 AI 助手：**
 claude, cursor, windsurf, antigravity, copilot, kiro, codex, qoder, roocode, gemini, trae, opencode, continue, all
