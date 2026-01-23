@@ -4,53 +4,120 @@ from ..spec.model import SkillSpec
 
 
 def render_windsurf_workflow_md(spec: SkillSpec) -> str:
-    # Windsurf workflows often use a small YAML header; keep it minimal.
-    header = "---\n" + f"description: {spec.description}\n" + "auto_execution_mode: 3\n---\n"
-    lines = [header, f"# {spec.name}", ""]
+    """
+    Render Windsurf workflow markdown (PRIMARY target).
+    
+    Follows ui-ux-pro-max patterns:
+    - Clear workflow steps with numbered sections
+    - Gate steps marked with 🚦
+    - References expanded to full paths
+    - Deterministic tools section for scripts
+    """
+    # YAML frontmatter
+    lines = [
+        "---",
+        f"description: {spec.description}",
+        "auto_execution_mode: 3",
+        "---",
+        "",
+        f"# {spec.name}",
+        "",
+        spec.description,
+        "",
+    ]
 
-    is_skill_creator = spec.name == "skill-creator"
-    if is_skill_creator:
-        lines.append("Role: skill generator.")
-        lines.append("")
-        lines.append("Non-negotiable:")
-        lines.append("- Follow the canonical SkillSpec at skills/<skill>/skillspec.json")
-        lines.append("- Generate Claude/Windsurf/Cursor/GitHub Skills outputs")
-        lines.append("- Run validation before packaging")
-        lines.append("")
-    else:
-        lines.append("Role: workflow executor.")
-        lines.append("")
+    # Prerequisites (if scripts exist)
+    if spec.scripts:
+        lines.extend([
+            "## Prerequisites",
+            "",
+            "```bash",
+            "python3 --version || python --version",
+            "```",
+            "",
+        ])
 
+    # Triggers
     if spec.triggers:
         lines.append("## Triggers")
+        lines.append("")
         for t in spec.triggers:
             lines.append(f"- {t}")
         lines.append("")
 
+    # How to Use (for skill-creator specifically)
+    is_skill_creator = spec.name == "skill-creator"
+    if is_skill_creator:
+        lines.extend([
+            "## How to Use This Workflow",
+            "",
+            "When user requests skill creation (create, build, generate, update), follow this workflow:",
+            "",
+        ])
+
+    # Workflow
     lines.append("## Workflow")
+    lines.append("")
     lines.append(f"Mode: `{spec.workflow_type}`")
     lines.append("")
+    
     for i, step in enumerate(spec.steps, start=1):
-        lines.append(f"### Step {i} — {step.title}")
+        kind_badge = " 🚦 GATE" if step.kind == "gate" else ""
+        lines.append(f"### Step {i}: {step.title}{kind_badge}")
+        lines.append("")
+        
         if step.notes:
             notes = step.notes
+            # Expand references paths
             notes = notes.replace("`references/", f"`skills/{spec.name}/references/")
             lines.append(notes)
+            lines.append("")
+        
         if step.commands:
             lines.append("```bash")
-            lines.extend(step.commands)
+            for cmd in step.commands:
+                lines.append(cmd)
             lines.append("```")
+            lines.append("")
+
+    # References section
+    if spec.references:
+        lines.append("## References")
+        lines.append("")
+        for ref in spec.references:
+            ref_path = f"skills/{spec.name}/{ref}"
+            lines.append(f"- `{ref_path}`")
         lines.append("")
 
+    # Deterministic tools (for skill-creator)
     if is_skill_creator:
-        lines.append("## Deterministic tools")
-        lines.append("```bash")
-        lines.append("# Generate outputs for all targets")
-        lines.append("python3 .shared/skill-creator/scripts/generate.py skills/<skill>/skillspec.json")
-        lines.append("# Validate outputs")
-        lines.append("python3 .shared/skill-creator/scripts/validate.py skills/<skill>/skillspec.json")
-        lines.append("# Package Claude .skill")
-        lines.append("python3 .shared/skill-creator/scripts/package.py --target claude --skill <skill>")
-        lines.append("```")
+        lines.extend([
+            "## Search & Generate Tools",
+            "",
+            "```bash",
+            "# Search skill patterns and get recommendations",
+            'python3 .shared/skill-creator/scripts/search.py "<keywords>" --skill-system -p "<name>"',
+            "",
+            "# Generate Windsurf workflow (primary target)",
+            "python3 .shared/skill-creator/scripts/generate.py skills/<skill>/skillspec.json",
+            "",
+            "# Generate all targets (backward compat)",
+            "python3 .shared/skill-creator/scripts/generate.py skills/<skill>/skillspec.json --all",
+            "",
+            "# Validate spec and outputs",
+            "python3 .shared/skill-creator/scripts/validate.py skills/<skill>/skillspec.json",
+            "",
+            "# Package Claude .skill",
+            "python3 .shared/skill-creator/scripts/package.py --target claude --skill <skill>",
+            "```",
+            "",
+        ])
+
+    # Footer
+    lines.extend([
+        "---",
+        "",
+        f"*Generated by skill-creator. Source: `skills/{spec.name}/skillspec.json`*",
+    ])
 
     return "\n".join(lines)

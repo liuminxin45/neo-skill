@@ -1,0 +1,11 @@
+id,rule,target,severity,message,fix_hint
+name_kebab,"name must be kebab-case","skillspec.name",error,"Name '{value}' is not kebab-case","Use lowercase letters, digits, and hyphens only"
+description_required,"description is required","skillspec.description",error,"Description is empty","Add a one-sentence description of when to use this skill"
+questions_max_10,"questions must be <= 10","skillspec.questions",error,"Too many questions ({count})","Consolidate or prioritize to 10 or fewer"
+triggers_min_3,"at least 3 triggers recommended","skillspec.triggers",warning,"Only {count} triggers defined","Add more example phrases users might say"
+steps_not_empty,"workflow must have steps","skillspec.workflow.steps",error,"No workflow steps defined","Add at least one step to the workflow"
+step_id_required,"each step needs an id","workflow.steps[].id",error,"Step {index} missing id","Add a unique kebab-case id"
+step_title_required,"each step needs a title","workflow.steps[].title",error,"Step {index} missing title","Add a descriptive title"
+claude_frontmatter_strict,"Claude frontmatter only name+description","claude/SKILL.md",error,"Extra frontmatter keys: {keys}","Remove all keys except name and description"
+no_banned_files,"no README/CHANGELOG in skill bundle","skill bundle",error,"Banned file found: {file}","Remove or move to project root"
+notes_max_length,"step notes should be concise","workflow.steps[].notes",warning,"Notes too long ({chars} chars)","Move details to references/ and use index-style notes"

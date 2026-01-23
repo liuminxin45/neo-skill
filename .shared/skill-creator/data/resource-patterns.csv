@@ -1,0 +1,8 @@
+id,name,location,content_type,when_to_use,size_limit
+reference,"Reference Documents","references/","markdown rules, specs, templates","Static knowledge, rules, guidelines that AI reads","<5KB per file"
+script,"Deterministic Scripts","scripts/","python, bash, node scripts","Reproducible operations, validation, packaging","<500 lines"
+asset,"Structured Data","assets/","csv, json, yaml data files","Searchable data, templates, configs","<100KB"
+shared,"Shared Resources",".shared/{skill}/","cross-skill data and scripts","Reusable across multiple skills","per-file limits apply"
+index,"Index Notes","workflow.steps[].notes","short pointers to resources","Keep steps lightweight, point to details","<200 chars"
+master,"Master Config","skillspec.json","single source of truth","All skill metadata and workflow definition","<10KB"
+override,"Page/Step Override","{context}.md","context-specific deviations","When specific context needs different rules","<2KB"

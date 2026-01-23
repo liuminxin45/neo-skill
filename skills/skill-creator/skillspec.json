@@ -1,8 +1,9 @@
 {
   "version": 1,
   "name": "skill-creator",
-  "description": "对话式收集需求（最多 10 个关键问题），生成可在 Claude/Windsurf/Cursor/GitHub Skills 等多 AI Assistant 运行的技能包（SKILL.md + references/scripts/assets），并输出 Claude .skill 打包文件。",
-  "assistants": ["claude", "windsurf", "cursor", "github-skills"],
+  "description": "对话式收集需求（最多 10 问），生成 Windsurf workflow（主要目标）+ Claude/Cursor/GitHub Skills 兼容输出。支持多级数据索引、共享资源架构、Master+Overrides 模式。",
+  "primary_target": "windsurf",
+  "backward_compat": ["claude", "cursor", "github"],
   "questions": [
     "这个 skill 的一句话目标是什么（动词开头，面向可重复任务）？",
     "用户会用哪些触发语句/关键词来表述这个需求（至少 5 条）？",
@@ -12,76 +13,104 @@
     "需要哪些输入（repo/commit/diff/config/logs 等），从哪里来？",
     "工作流要拆成哪些关键步骤/分支？关键 gate 是什么？",
     "常见失败/边界情况有哪些？希望如何处理（停止/回退/提示）？",
-    "为了减少上下文占用与便于复用：哪些内容应放到 references/（规则/规范/模板）、assets/（结构化数据/默认规则库）或 scripts/（确定性执行）里？",
-    "需要适配哪些 AI Assistant（Claude/Windsurf/Cursor/VS Code/GitHub Copilot 等）？"
+    "哪些内容应放到 references/（规则）、assets/（数据）、scripts/（确定性执行）或 .shared/（跨skill复用）？"
   ],
   "triggers": [
-    "我想做一个 skill（Claude/Windsurf/Cursor 都能用）",
+    "我想做一个 skill",
+    "帮我生成 Windsurf workflow",
     "帮我生成 SKILL.md",
     "把我的 prompt 工作流变成 skill",
     "帮我在已有 skill 的基础上补充/重构 workflow steps",
     "做一个 skill 库/skill creator",
-    "打包成 Claude .skill"
+    "打包成 Claude .skill",
+    "create a new skill",
+    "generate workflow for my task"
   ],
   "freedom_level": "low",
   "workflow": {
     "type": "sequential",
     "steps": [
       {
+        "id": "analyze",
+        "title": "分析用户需求",
+        "kind": "action",
+        "commands": [],
+        "notes": "提取关键信息：任务类型、输出形态、约束条件、工具边界。可用搜索辅助：`python3 .shared/skill-creator/scripts/search.py \"<keywords>\" --skill-system`"
+      },
+      {
         "id": "collect",
         "title": "对话式收集需求（<=10 问）",
         "kind": "action",
         "commands": [],
-        "notes": "只问缺失信息；最多 10 个问题；问完就进入生成阶段。"
+        "notes": "只问缺失信息；最多 10 个问题；优先级：目标 > 触发词 > 输出形态 > 约束 > 工具边界。详见 `references/requirement-collection.md`"
+      },
+      {
+        "id": "design",
+        "title": "设计 Skill 系统（Master + Overrides）",
+        "kind": "action",
+        "commands": [
+          "python3 .shared/skill-creator/scripts/search.py \"<task_keywords>\" --skill-system -p \"<skill_name>\""
+        ],
+        "notes": "生成完整设计：workflow pattern + output pattern + resource strategy + reasoning rules。详见 `references/skill-system-design.md`"
       },
       {
         "id": "spec",
         "title": "落地 SkillSpec（单一真源）",
         "kind": "action",
         "commands": [],
-        "notes": "把收集到的信息写入 skills/<name>/skillspec.json；确定 references/scripts/assets 需要哪些内容（progressive disclosure）。"
+        "notes": "写入 skills/<name>/skillspec.json；采用索引式 notes（指向 references/）；确定 references/scripts/assets/.shared 分布。"
       },
       {
         "id": "edit-workflow",
-        "title": "对话式补充/重构 workflow steps（归类/增删/合并）",
+        "title": "补充/重构 workflow steps",
         "kind": "action",
         "commands": [],
-        "notes": "当目标是‘更新已有 skill’时：先读取现有 skills/<skill>/skillspec.json，提取现有 workflow.steps 与每步意图；再把用户新增需求归类到已有 step（必要时新增 step）；允许删除或合并 step（必须给出理由与安全检查）；默认采用‘索引式工作流’：step 只做索引，详细规则/模板/默认库应沉淀在 references/ 或 assets/，必要时用 scripts/ 保证确定性；最后输出一个可落盘的变更摘要 + 最终 workflow.steps。协议与输出模板见 `references/workflow-step-editing.md`。"
+        "notes": "更新已有 skill 时：读取现有 spec → 归类新需求到已有 step → 必要时新增/合并 step → 输出变更摘要。协议见 `references/workflow-step-editing.md`"
       },
       {
         "id": "generate",
-        "title": "生成多 Assistant 入口文件",
+        "title": "生成 Windsurf workflow（+ 兼容输出）",
         "kind": "action",
         "commands": [
-          "python3 .shared/skill-creator/scripts/generate.py skills/<skill>/skillspec.json"
+          "python3 .shared/skill-creator/scripts/generate.py skills/<skill>/skillspec.json",
+          "python3 .shared/skill-creator/scripts/generate.py skills/<skill>/skillspec.json --all"
         ],
-        "notes": "输出：.claude/.windsurf/.cursor/.github 对应入口 + resources 拷贝。"
+        "notes": "默认只生成 Windsurf；--all 生成全部兼容目标（Claude/Cursor/GitHub）。"
       },
       {
         "id": "validate",
-        "title": "校验（spec + Claude frontmatter strict + 目录噪声）",
+        "title": "校验（spec + outputs + 结构）",
         "kind": "gate",
         "commands": [
           "python3 .shared/skill-creator/scripts/validate.py skills/<skill>/skillspec.json"
         ],
-        "notes": "Claude strict：frontmatter 仅允许 name/description；skill bundle 内禁止 README/CHANGELOG 等无关文档。"
+        "notes": "检查：kebab-case 命名、questions<=10、Claude frontmatter strict、无 banned files。详见 `.shared/skill-creator/data/validation-rules.csv`"
+      },
+      {
+        "id": "checklist",
+        "title": "Pre-delivery Checklist",
+        "kind": "gate",
+        "commands": [],
+        "notes": "交付前检查：triggers 覆盖常见表述、workflow steps 完整、references 无冗余、scripts 可执行。详见 `references/pre-delivery-checklist.md`"
       },
       {
         "id": "package",
-        "title": "打包分发（Claude .skill + 仓库 zip）",
+        "title": "打包分发",
         "kind": "action",
         "commands": [
-          "python3 .shared/skill-creator/scripts/package.py --target claude --skill <skill>",
-          "python3 .shared/skill-creator/scripts/package.py --target repo"
+          "python3 .shared/skill-creator/scripts/package.py --target claude --skill <skill>"
         ],
-        "notes": "Claude：zip 根是 skill 文件夹；仓库 zip 便于直接丢进 IDE。"
+        "notes": "Claude .skill zip（根是 skill 文件夹）；可选 --target repo 打包整个仓库。"
       }
     ]
   },
   "references": [
     "references/output-patterns.md",
     "references/workflows.md",
-    "references/workflow-step-editing.md"
+    "references/workflow-step-editing.md",
+    "references/requirement-collection.md",
+    "references/skill-system-design.md",
+    "references/pre-delivery-checklist.md"
   ],
   "scripts": [],
   "assets": []

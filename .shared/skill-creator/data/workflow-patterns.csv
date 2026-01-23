@@ -1,0 +1,6 @@
+id,name,description,when_to_use,structure,example_steps
+sequential,"Sequential Workflow","Steps execute in order, each depends on previous","Simple linear tasks, clear dependencies","step1 -> step2 -> step3","collect -> plan -> generate -> validate -> package"
+conditional,"Conditional Workflow","Branches based on input or intermediate results","Tasks with multiple paths, feature flags","if condition: path_a else: path_b","analyze -> (new_skill: create, existing: update) -> validate"
+gated,"Gated Workflow","Checkpoints that must pass before proceeding","Quality-critical tasks, multi-phase projects","step -> gate -> step -> gate","generate -> lint_gate -> test_gate -> deploy"
+parallel,"Parallel Workflow","Independent steps that can run concurrently","Performance-critical, independent subtasks","[step_a, step_b, step_c] -> merge","[search_style, search_color, search_font] -> synthesize"
+iterative,"Iterative Workflow","Repeat steps until condition met","Refinement tasks, user feedback loops","while !done: step -> check","draft -> review -> (approved: done, rejected: revise)"

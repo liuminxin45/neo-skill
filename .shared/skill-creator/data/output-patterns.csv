@@ -1,0 +1,8 @@
+id,name,description,when_to_use,template_type,example
+template,"Template Pattern","Structured output with placeholders","Reports, documents, code generation","strict or flexible","# [Title]\n## Summary\n[content]"
+examples,"Examples Pattern","Input/output pairs for style learning","Style-sensitive output, commit messages","input_output_pairs","Input: X -> Output: Y"
+structured,"Structured Data","JSON/YAML/CSV machine-readable output","API responses, data exports, configs","schema_based","{ key: value }"
+checklist,"Checklist Pattern","Actionable items with status","Reviews, audits, validation","checkbox_list","- [ ] Item 1\n- [ ] Item 2"
+code,"Code Generation","Source code with imports and tests","Implementation tasks","language_specific","```python\ndef func():\n    pass\n```"
+patch,"Patch/Diff Pattern","Changes to existing code","Bug fixes, refactoring","unified_diff","+added\n-removed"
+tree,"Directory Tree","File/folder structure","Project scaffolding, organization","ascii_tree","src/\n  index.ts\n  utils/"

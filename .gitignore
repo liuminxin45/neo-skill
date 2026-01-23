@@ -37,8 +37,11 @@ coverage/
 .claude/
 .cursor/
 .windsurf/
-.shared/
 .github/skills/
+
+# .shared/ is gitignored EXCEPT skill-creator core (versioned)
+.shared/*
+!.shared/skill-creator/
 
 # OS
 Thumbs.db

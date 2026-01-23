@@ -1,0 +1,11 @@
+condition,recommendation,priority,rationale
+"deterministic_output",use_scripts,high,"When output must be reproducible, use scripts/ instead of heuristics"
+"large_context",progressive_disclosure,high,"When context >2000 tokens, split into references/ and use index-style notes"
+"reusable_rules",shared_data,medium,"When rules apply to multiple skills, move to .shared/"
+"multi_step_workflow",sequential_with_gates,high,"For complex workflows, add gate steps for validation between phases"
+"user_input_required",collect_step_first,high,"When user input is needed, always start with a collect requirements step"
+"code_output",template_pattern,medium,"When generating code, provide templates in references/ for consistency"
+"review_task",checklist_output,high,"For review/audit tasks, output structured checklists"
+"api_integration",scripts_with_validation,high,"For API calls, use scripts/ with built-in validation"
+"error_prone_step",add_gate,high,"For steps that commonly fail, add a gate with clear error messages"
+"shared_across_skills",move_to_shared,medium,"Data/scripts used by multiple skills should live in .shared/"

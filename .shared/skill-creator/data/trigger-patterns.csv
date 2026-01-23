@@ -1,0 +1,8 @@
+id,verb,context_keywords,intent,example_triggers
+create,"create, build, make, generate, scaffold","new, skill, workflow, project","Create new artifact from scratch","创建一个skill, build a new workflow, make a skill for X"
+update,"update, modify, edit, change, refactor","existing, current, improve, add to","Modify existing artifact","更新已有skill, add steps to workflow, refactor the skill"
+review,"review, check, audit, validate, verify","quality, compliance, standards","Inspect for quality/compliance","审查这个skill, validate the spec, check for issues"
+fix,"fix, repair, debug, resolve, patch","bug, issue, error, broken","Resolve a problem","修复这个问题, fix the validation error, resolve the conflict"
+explain,"explain, describe, document, clarify","how, why, what, understand","Provide understanding","解释这个workflow, how does this work, document the process"
+convert,"convert, transform, migrate, port","from, to, into, format","Change format/structure","把prompt转成skill, convert to Claude format, migrate to Windsurf"
+package,"package, bundle, zip, export, distribute","deploy, share, publish","Prepare for distribution","打包成.skill, export for Claude, prepare for distribution"

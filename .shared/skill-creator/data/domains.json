@@ -1,0 +1,56 @@
+{
+  "domains": {
+    "workflow": {
+      "description": "Workflow patterns: sequential, conditional, parallel, gate-based",
+      "keywords": ["sequential", "conditional", "parallel", "gate", "branch", "loop", "retry"],
+      "data_file": "workflow-patterns.csv"
+    },
+    "output": {
+      "description": "Output patterns: template, examples, structured, report",
+      "keywords": ["template", "example", "structured", "report", "code", "patch", "checklist"],
+      "data_file": "output-patterns.csv"
+    },
+    "validation": {
+      "description": "Validation rules: spec, frontmatter, structure, naming",
+      "keywords": ["validate", "check", "gate", "lint", "schema", "strict", "frontmatter"],
+      "data_file": "validation-rules.csv"
+    },
+    "resource": {
+      "description": "Resource organization: references, scripts, assets",
+      "keywords": ["reference", "script", "asset", "data", "template", "shared", "progressive"],
+      "data_file": "resource-patterns.csv"
+    },
+    "trigger": {
+      "description": "Trigger patterns: action verbs, context keywords, intent signals",
+      "keywords": ["create", "build", "fix", "review", "generate", "update", "help"],
+      "data_file": "trigger-patterns.csv"
+    }
+  },
+  "stacks": {
+    "windsurf": {
+      "description": "Windsurf workflow format (PRIMARY)",
+      "format": "yaml-frontmatter + markdown",
+      "output_path": ".windsurf/workflows/{name}.md",
+      "priority": 1
+    },
+    "claude": {
+      "description": "Claude SKILL.md format (backward compat)",
+      "format": "strict yaml-frontmatter (name+description only)",
+      "output_path": ".claude/skills/{name}/SKILL.md",
+      "priority": 2
+    },
+    "cursor": {
+      "description": "Cursor command format (backward compat)",
+      "format": "markdown with bash blocks",
+      "output_path": ".cursor/commands/{name}.md",
+      "priority": 3
+    },
+    "github": {
+      "description": "GitHub Skills format (backward compat)",
+      "format": "extended yaml-frontmatter",
+      "output_path": ".github/skills/{name}/SKILL.md",
+      "priority": 4
+    }
+  },
+  "reasoning_file": "skill-reasoning.csv"
+}

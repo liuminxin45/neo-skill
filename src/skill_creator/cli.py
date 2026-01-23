@@ -19,7 +19,6 @@ DEFAULT_QUESTIONS: List[str] = [
     "工作流要拆成哪些关键步骤/分支？关键 gate 是什么？",
     "常见失败/边界情况有哪些？希望如何处理（停止/回退/提示）？",
     "哪些内容应放到 references 或 scripts 以降低上下文占用？",
-    "需要适配哪些 AI Assistant（Claude/Windsurf/Cursor/GitHub Skills 等）？",
 ]
 
 
@@ -39,8 +38,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         "version": 1,
         "name": skill_name,
         "description": args.description.strip() if args.description else f"<TODO: describe when to use {skill_name}>",
-        "assistants": ["claude", "windsurf", "cursor", "github-skills"],
-        "questions": DEFAULT_QUESTIONS,
+                "questions": DEFAULT_QUESTIONS,
         "triggers": [
             f"Create a new skill named {skill_name}",
             f"Update the {skill_name} skill",
@@ -143,7 +141,16 @@ def cmd_generate(args: argparse.Namespace) -> int:
     repo_root = Path(args.repo_root).resolve()
     spec_path = Path(args.spec).resolve()
     assert_spec_valid(spec_path)
-    spec = generate_all(repo_root, spec_path)
+    
+    # Determine targets: default is windsurf only, --all for all targets
+    if getattr(args, "all", False):
+        targets = None  # None means all targets
+        print("Generating for all targets (windsurf + backward compat)...")
+    else:
+        targets = [getattr(args, "target", "windsurf") or "windsurf"]
+        print(f"Generating for: {targets[0]} (primary target)")
+    
+    spec = generate_all(repo_root, spec_path, targets=targets)
     print(f"Generated outputs for: {spec.name}")
     return 0
 
@@ -246,6 +253,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_gen = sub.add_parser("generate", help="Generate multi-assistant outputs from skillspec.json")
     p_gen.add_argument("spec", help="Path to skillspec.json")
+    p_gen.add_argument("--target", "-t", choices=["windsurf", "claude", "cursor", "github"],
+                       default="windsurf", help="Target to generate (default: windsurf)")
+    p_gen.add_argument("--all", "-a", action="store_true",
+                       help="Generate for all targets (windsurf + backward compat)")
     p_gen.set_defaults(func=cmd_generate)
 
     p_val = sub.add_parser("validate", help="Validate spec and generated outputs")

@@ -50,9 +50,7 @@ class SkillSpec:
     name: str
     description: str
 
-    # Multi-assistant support
-    assistants: List[str] = field(default_factory=lambda: ["claude", "windsurf", "cursor", "github-skills"])
-
+    
     # Prompting
     questions: List[str] = field(default_factory=list)  # must be <= 10
     triggers: List[str] = field(default_factory=list)
@@ -78,8 +76,6 @@ class SkillSpec:
             version=int(d.get("version", 1)),
             name=str(d.get("name", "")).strip(),
             description=str(d.get("description", "")).strip(),
-            assistants=[str(x) for x in _as_list(d.get("assistants"))]
-            or ["claude", "windsurf", "cursor", "github-skills"],
             questions=[str(x) for x in _as_list(d.get("questions"))],
             triggers=[str(x) for x in _as_list(d.get("triggers"))],
             freedom_level=str(d.get("freedom_level", "low")).strip(),

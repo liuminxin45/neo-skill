@@ -1,9 +1,8 @@
 {
-  "name": "neo-skills",
+  "name": "neo-skill",
   "version": "0.1.11",
   "description": "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec.",
   "license": "MIT",
-  "type": "commonjs",
   "bin": {
     "omni-skill": "bin/omni-skill.js",
     "skill-creator": "bin/skill-creator.js"
@@ -17,24 +16,9 @@
     ".windsurf/**",
     ".cursor/**",
     ".github/skills/**",
-    "README.md",
-    "pyproject.toml"
+    "README.md"
   ],
-  "scripts": {
-    "lint": "eslint \"bin/*.js\" \".eslintrc.cjs\" \".dependency-cruiser.js\"",
-    "format": "prettier --write \"bin/*.js\" \".eslintrc.cjs\" \".prettierrc.json\" \".dependency-cruiser.js\"",
-    "format:check": "prettier --check \"bin/*.js\" \".eslintrc.cjs\" \".prettierrc.json\" \".dependency-cruiser.js\"",
-    "boundary": "depcruise --config .dependency-cruiser.js bin",
-    "depcheck": "depcheck --ignores=depcheck,dependency-cruiser,eslint,prettier",
-    "gate": "npm run format:check && npm run lint && npm run boundary && npm run depcheck",
-    "postinstall": "node -e \"process.env.NEO_SKILLS_SKIP_UIPRO_INSTALL==='1'?process.exit(0):process.exit(require('child_process').spawnSync('npm',['install','-g','uipro-cli'],{stdio:'inherit',shell:true}).status||0)\""
-  },
-  "devDependencies": {
-    "depcheck": "^1.4.7",
-    "dependency-cruiser": "^16.6.0",
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5"
-  },
+  "scripts": {},
   "engines": {
     "node": ">=16"
   }
