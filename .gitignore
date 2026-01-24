@@ -50,9 +50,7 @@ coverage/
 .trae/
 .github/prompts/
 
-# .shared/ is gitignored EXCEPT skill-creator core (versioned)
-.shared/*
-!.shared/skill-creator/
+# .shared/ is versioned (committed)
 
 # OS
 Thumbs.db
