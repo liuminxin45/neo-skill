@@ -52,6 +52,55 @@ omni-skill install ./skills
 
 **Note:** Unlike `init`, the `install` command always generates outputs for all AI targets to ensure maximum compatibility.
 
+### `omni-skill install-skill <skill-id>`
+Install skill with dependency closure (new architecture).
+
+**Usage:**
+```bash
+omni-skill install-skill review-gate --target windsurf
+omni-skill install-skill skill-creator --target claude
+```
+
+**What it does:**
+1. Resolves skill dependency closure (minimal files)
+2. Materializes files to Install Space
+3. Generates install manifest
+4. Validates paths (no source path leakage)
+
+**Architecture:**
+- Uses Source Space (skills/) for build
+- Copies to Install Space (.windsurf/, .claude/, etc.) for runtime
+- Only copies minimal closure (not entire source directory)
+
+### `omni-skill doctor --skill <skill-id>`
+Diagnose skill installation and dependencies.
+
+**Usage:**
+```bash
+omni-skill doctor --skill review-gate --target windsurf
+```
+
+**What it checks:**
+- Install manifest exists
+- All referenced files exist
+- No source path leakage
+- Index files are valid
+- Dependency closure is complete
+
+**Output:**
+```
+=== Skill Diagnostic Report ===
+Skill ID: review-gate
+Install Root: .windsurf/workflows/data/review-gate
+
+--- Path Validation ---
+✓ No source path leakage detected
+✓ All index paths point to Install Space
+✓ All referenced files exist
+
+=== Diagnostic Complete ===
+```
+
 ### `omni-skill update`
 Update npm package and re-initialize skills.
 

@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set
 
 from skill_creator.cli import cmd_generate
+from .install import SkillInstaller
+from .doctor import SkillDoctor
 
 STATE_FILE = ".neo-skill.json"
 
@@ -310,9 +312,36 @@ def _cmd_init(args: argparse.Namespace) -> int:
     return _handle_init(resolved["selected"], "init")
 
 
+def _cmd_install_new(args: argparse.Namespace) -> int:
+    """
+    Install skill with dependency closure (new architecture).
+    Usage: omni-skill install <skill-id> [--target <agent>]
+    """
+    cwd = Path.cwd().resolve()
+    pkg_root = _get_pkg_root()
+    
+    skill_id = args.skill_id
+    target = getattr(args, 'target', 'windsurf')
+    
+    # 使用新的 SkillInstaller
+    installer = SkillInstaller(source_root=pkg_root, install_root=cwd)
+    
+    try:
+        manifest = installer.install(skill_id, target)
+        print(f"\n✓ Successfully installed {skill_id}")
+        print(f"  Install root: {manifest.install_root}")
+        print(f"  Files: {len(manifest.files)}")
+        if manifest.dependencies.get('libraries'):
+            print(f"  Libraries: {', '.join(manifest.dependencies['libraries'])}")
+        return 0
+    except Exception as e:
+        print(f"\n✗ Installation failed: {e}")
+        return 1
+
+
 def _cmd_install(args: argparse.Namespace) -> int:
     """
-    Install skill(s) from a local directory.
+    Install skill(s) from a local directory (legacy).
     Usage: omni-skill install <path-to-skill-or-skills-dir>
     
     Note: install command always generates outputs for all AI targets.
@@ -377,6 +406,28 @@ def _print_init_help() -> None:
     print("  omni-skill init --ai all")
 
 
+def _cmd_doctor(args: argparse.Namespace) -> int:
+    """
+    Diagnose skill installation and dependencies.
+    Usage: omni-skill doctor --skill <skill-id> [--target <agent>]
+    """
+    cwd = Path.cwd().resolve()
+    
+    skill_id = args.skill_id
+    target = getattr(args, 'target', 'windsurf')
+    
+    # 使用 SkillDoctor
+    doctor = SkillDoctor(install_root=cwd)
+    
+    report = doctor.diagnose(skill_id, target)
+    print(report.format())
+    
+    # 返回错误码
+    if report.has_errors():
+        return 1
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="omni-skill",
@@ -392,6 +443,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_install = sub.add_parser("install", help="Install skill(s) from a local directory")
     p_install.add_argument("path", help="Path to skill directory or skills directory")
     p_install.set_defaults(func=_cmd_install)
+    
+    # 新增：install-skill 命令（使用新架构）
+    p_install_new = sub.add_parser("install-skill", help="Install skill with dependency closure (new)")
+    p_install_new.add_argument("skill_id", help="Skill ID to install")
+    p_install_new.add_argument("--target", default="windsurf", help="Target AI (windsurf/claude/cursor/github)")
+    p_install_new.set_defaults(func=_cmd_install_new)
+    
+    # 新增：doctor 命令
+    p_doctor = sub.add_parser("doctor", help="Diagnose skill installation")
+    p_doctor.add_argument("--skill", dest="skill_id", required=True, help="Skill ID to diagnose")
+    p_doctor.add_argument("--target", default="windsurf", help="Target AI (windsurf/claude/cursor/github)")
+    p_doctor.set_defaults(func=_cmd_doctor)
 
     p_update = sub.add_parser("update", help="Update npm package and re-initialize skills")
     p_update.set_defaults(func=_cmd_update)
