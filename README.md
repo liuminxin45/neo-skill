@@ -2,13 +2,37 @@
 
 一个确定性的 **skill-creator** 仓库。
 
-**GitHub**: https://github.com/liuminxin45/neo-skill
+**GitHub**: https://github.com/liuminxin45/neo-skill  
+**npm**: https://www.npmjs.com/package/neo-skill
 
-## 使用方式
+## 安装
+
+```bash
+# 通过 npm 安装（推荐）
+npm install -g neo-skill
+
+# 或通过 pip 安装
+pip install neo-skill
+```
 
 **前置依赖**：需要安装 Python 3.8+
 
-### 直接运行 Python 模块
+## 使用方式
+
+### 命令行工具（安装后）
+
+```bash
+# 初始化技能
+omni-skill init --ai claude
+
+# 生成技能输出
+skill-creator generate skills/skill-name/skillspec.json
+
+# 验证技能
+skill-creator validate skills/skill-name/skillspec.json
+```
+
+### 直接运行 Python 模块（开发模式）
 
 ```bash
 # 初始化技能
@@ -51,30 +75,30 @@ python -m skill_creator.cli validate skills/skill-name/skillspec.json
 **初始化技能文件**
 ```bash
 # 初始化指定 AI 助手的技能文件
-python -m omni_skill.cli init --ai claude
-python -m omni_skill.cli init --ai windsurf
-python -m omni_skill.cli init --ai all  # 初始化所有支持的 AI 助手
+omni-skill init --ai claude
+omni-skill init --ai windsurf
+omni-skill init --ai all  # 初始化所有支持的 AI 助手
 
 # 更新（基于上次 init 的配置）
-python -m omni_skill.cli update
+omni-skill update
 ```
 
 **生成和验证技能**
 ```bash
 # 生成技能输出
-python -m skill_creator.cli generate skills/skill-name/skillspec.json
+skill-creator generate skills/skill-name/skillspec.json
 
 # 验证技能
-python -m skill_creator.cli validate skills/skill-name/skillspec.json
+skill-creator validate skills/skill-name/skillspec.json
 
 # 打包 Claude 技能
-python -m skill_creator.cli package --target claude --skill skill-name
+skill-creator package --target claude --skill skill-name
 ```
 
 **在其他项目中使用**
 将 neo-skill 仓库克隆到你的项目中（例如 `vendor/neo-skill/`），然后：
 1. 设置 PYTHONPATH：`export PYTHONPATH=$PWD/vendor/neo-skill/src:$PYTHONPATH`
-2. 运行命令：`python -m omni_skill.cli init --ai claude`
+2. 运行命令：`omni-skill init --ai claude`
 
 **支持的 AI 助手：**
 claude, cursor, windsurf, antigravity, copilot, kiro, codex, qoder, roocode, gemini, trae, opencode, continue, all
