@@ -100,11 +100,13 @@ def _generate_workflow_steps(self, ctx, pack_template, recipe):
         steps[0]["notes"] += "\n".join(lib_notes)
 ```
 
-#### C. Windsurf Workflow（最终输出）
+#### C. 所有 Target 的最终输出（Windsurf/Claude/Cursor/GitHub）
 
-**代码位置**：`src/skill_creator/targets/windsurf.py`
+**代码位置**：`src/skill_creator/targets/common.py` 中的 `_render_prerequisites()` 函数
 
-生成的 `.windsurf/workflows/{skill-name}.md` 会包含：
+**所有 AI 助手的输出**都会包含推荐的三方库信息：
+
+生成的文件（`.windsurf/workflows/`, `.claude/skills/`, `.cursor/commands/`, `.github/skills/`）都会包含：
 
 ```markdown
 ## Prerequisites

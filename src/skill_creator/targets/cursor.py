@@ -1,11 +1,18 @@
 from __future__ import annotations
 
 from ..spec.model import SkillSpec
+from .common import _render_prerequisites
 
 
 def render_cursor_command_md(spec: SkillSpec) -> str:
     # Cursor's command palette prompts are typically Markdown instructions.
     lines = [f"# {spec.name}", "", spec.description, ""]
+    
+    # Prerequisites (三方库信息)
+    prerequisites = _render_prerequisites(spec, include_python_check=False)
+    if prerequisites:
+        lines.append(prerequisites)
+    
     if spec.triggers:
         lines.append("## When to use")
         lines.extend([f"- {t}" for t in spec.triggers])

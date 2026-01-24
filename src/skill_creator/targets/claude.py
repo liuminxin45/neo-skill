@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from ..spec.model import SkillSpec
 from ..util.frontmatter import dump_frontmatter
-from .common import _render_steps, _render_resources, _render_footer
+from .common import _render_steps, _render_resources, _render_footer, _render_prerequisites
 
 
 def render_claude_skill_md(spec: SkillSpec) -> str:
@@ -15,6 +15,11 @@ def render_claude_skill_md(spec: SkillSpec) -> str:
     body.append("## What this skill does")
     body.append(spec.description)
     body.append("")
+
+    # Prerequisites (三方库信息)
+    prerequisites = _render_prerequisites(spec, include_python_check=False)
+    if prerequisites:
+        body.append(prerequisites)
 
     if spec.triggers:
         body.append("## When to use (examples of user requests)")

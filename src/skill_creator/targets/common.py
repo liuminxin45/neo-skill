@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List
+from typing import Any, List
 
 from ..spec.model import SkillSpec, WorkflowStep
 
@@ -38,6 +38,88 @@ def _render_resources(spec: SkillSpec) -> str:
         for p in spec.assets:
             lines.append(f"- `{p}`")
         lines.append("")
+    return "\n".join(lines)
+
+
+def _render_libraries(spec: SkillSpec) -> str:
+    """
+    渲染推荐的第三方库信息（公共逻辑）。
+    所有 target 都应该展示三方库信息。
+    """
+    if not hasattr(spec, 'libraries') or not spec.libraries:
+        return ""
+    
+    lines = []
+    lines.append("**推荐的第三方库**:")
+    lines.append("")
+    
+    for lib in spec.libraries:
+        if isinstance(lib, dict):
+            lib_name = lib.get('name', '')
+            lib_purpose = lib.get('purpose', '')
+            lib_pypi = lib.get('pypi_link', '')
+            lib_docs = lib.get('docs_link', '')
+            
+            lines.append(f"- `{lib_name}`: {lib_purpose}")
+            if lib_pypi:
+                lines.append(f"  - 安装: `pip install {lib_name}`")
+                lines.append(f"  - PyPI: {lib_pypi}")
+            if lib_docs:
+                lines.append(f"  - 文档: {lib_docs}")
+        else:
+            lines.append(f"- `{lib}`")
+    
+    lines.append("")
+    
+    # 生成一键安装命令
+    lib_names = []
+    for lib in spec.libraries:
+        if isinstance(lib, dict):
+            lib_names.append(lib.get('name', ''))
+        else:
+            lib_names.append(str(lib))
+    
+    if lib_names:
+        lines.append("```bash")
+        lines.append("# 安装所有依赖")
+        lines.append("pip install " + " ".join(lib_names))
+        lines.append("```")
+        lines.append("")
+    
+    return "\n".join(lines)
+
+
+def _render_prerequisites(spec: SkillSpec, include_python_check: bool = True) -> str:
+    """
+    渲染 Prerequisites 部分（公共逻辑）。
+    
+    Args:
+        spec: SkillSpec 对象
+        include_python_check: 是否包含 Python 版本检查
+    
+    Returns:
+        Prerequisites 部分的 Markdown 文本
+    """
+    has_prerequisites = spec.scripts or (hasattr(spec, 'libraries') and spec.libraries)
+    if not has_prerequisites:
+        return ""
+    
+    lines = []
+    lines.append("## Prerequisites")
+    lines.append("")
+    
+    # Python 版本检查（可选）
+    if include_python_check and spec.scripts:
+        lines.append("```bash")
+        lines.append("python3 --version || python --version")
+        lines.append("```")
+        lines.append("")
+    
+    # 推荐的第三方库
+    lib_section = _render_libraries(spec)
+    if lib_section:
+        lines.append(lib_section)
+    
     return "\n".join(lines)
 
 
