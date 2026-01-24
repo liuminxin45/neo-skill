@@ -185,11 +185,51 @@ def _generate_outputs_best_effort(pkg_root: Path, cwd: Path) -> None:
     print("\nGenerating skill outputs from skillspec.json ...")
     for spec_path in specs:
         try:
-            ns = argparse.Namespace(repo_root=str(cwd), spec=str(spec_path))
+            ns = argparse.Namespace(repo_root=str(cwd), spec=str(spec_path), all=True)
             cmd_generate(ns)
         except SystemExit as e:
             rel = spec_path.relative_to(cwd) if spec_path.is_relative_to(cwd) else spec_path
             print(f"  Skipping generator for {rel} (exit {e.code})")
+
+
+def _install_skills_from_dir(skills_dir: Path, cwd: Path) -> int:
+    """
+    Install skills from a directory (either from npm package or local path).
+    Generates outputs for all AI targets.
+    """
+    if not skills_dir.exists():
+        print(f"Skills directory not found: {skills_dir}")
+        return 1
+    
+    specs = sorted(skills_dir.glob("*/skillspec.json"))
+    if not specs:
+        print(f"No skillspec.json found in: {skills_dir}")
+        return 1
+    
+    print(f"\nInstalling {len(specs)} skill(s) from {skills_dir} ...")
+    for spec_path in specs:
+        skill_name = spec_path.parent.name
+        print(f"  Installing skill: {skill_name}")
+        
+        # Copy skill to cwd/skills if not already there
+        dest_skill_dir = cwd / "skills" / skill_name
+        if spec_path.parent.resolve() != dest_skill_dir.resolve():
+            dest_skill_dir.parent.mkdir(parents=True, exist_ok=True)
+            if dest_skill_dir.exists():
+                import shutil
+                shutil.rmtree(dest_skill_dir)
+            shutil.copytree(spec_path.parent, dest_skill_dir)
+            print(f"    Copied to: {dest_skill_dir}")
+        
+        # Generate outputs for all targets
+        try:
+            ns = argparse.Namespace(repo_root=str(cwd), spec=str(cwd / "skills" / skill_name / "skillspec.json"), all=True)
+            cmd_generate(ns)
+            print(f"    Generated outputs for all targets")
+        except SystemExit as e:
+            print(f"    Warning: Generator failed (exit {e.code})")
+    
+    return 0
 
 
 def _handle_init(selected_ais: List[str], mode: str) -> int:
@@ -201,7 +241,12 @@ def _handle_init(selected_ais: List[str], mode: str) -> int:
     sync_pairs = _build_sync_pairs(effective_ais)
     print("Initializing skills in:", cwd)
     _perform_sync(pkg_root, cwd, sync_pairs)
-    _generate_outputs_best_effort(pkg_root, cwd)
+    
+    # Install all skills from npm package
+    pkg_skills_dir = pkg_root / "skills"
+    if pkg_skills_dir.exists():
+        _install_skills_from_dir(pkg_skills_dir, cwd)
+    
     _write_version_files(cwd, effective_ais, version)
     print("\nDone! neo-skill initialized.")
 
@@ -222,11 +267,57 @@ def _cmd_init(args: argparse.Namespace) -> int:
     return _handle_init(resolved["selected"], "init")
 
 
+def _cmd_install(args: argparse.Namespace) -> int:
+    """
+    Install skill(s) from a local directory.
+    Usage: omni-skill install <path-to-skill-or-skills-dir>
+    """
+    cwd = Path.cwd().resolve()
+    skill_path = Path(args.path).resolve()
+    
+    if not skill_path.exists():
+        raise SystemExit(f"Path not found: {skill_path}")
+    
+    # Check if it's a single skill directory (contains skillspec.json)
+    if (skill_path / "skillspec.json").exists():
+        # Single skill
+        temp_skills_dir = skill_path.parent
+        return _install_skills_from_dir(temp_skills_dir, cwd)
+    
+    # Check if it's a skills directory (contains subdirs with skillspec.json)
+    elif skill_path.is_dir():
+        return _install_skills_from_dir(skill_path, cwd)
+    
+    else:
+        raise SystemExit(f"Invalid path: {skill_path}. Must be a skill directory or skills directory.")
+
+
 def _cmd_update(args: argparse.Namespace) -> int:
+    """
+    Update npm package and re-initialize skills.
+    """
+    import subprocess
+    
     cwd = Path.cwd().resolve()
     state = _read_init_state(cwd)
     if not state["ok"]:
         raise SystemExit(state["error"])
+    
+    print("Updating neo-skill npm package...")
+    result = subprocess.run(
+        ["npm", "install", "neo-skill@latest"],
+        cwd=cwd,
+        capture_output=True,
+        text=True
+    )
+    
+    if result.returncode != 0:
+        print(f"Warning: npm install failed: {result.stderr}")
+        print("Continuing with re-initialization...")
+    else:
+        print("Package updated successfully.")
+    
+    print("\nRe-initializing skills...")
     return _handle_init(state["selected"], "update")
 
 
@@ -253,7 +344,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_init.add_argument("--ai", action="append", help="Target AI (can be repeated)")
     p_init.set_defaults(func=_cmd_init)
 
-    p_update = sub.add_parser("update", help="Update skills based on previous init state")
+    p_install = sub.add_parser("install", help="Install skill(s) from a local directory")
+    p_install.add_argument("path", help="Path to skill directory or skills directory")
+    p_install.set_defaults(func=_cmd_install)
+
+    p_update = sub.add_parser("update", help="Update npm package and re-initialize skills")
     p_update.set_defaults(func=_cmd_update)
 
     return p
