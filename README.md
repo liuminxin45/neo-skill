@@ -85,7 +85,10 @@ omni-skill init --ai all  # 初始化所有支持的 AI 助手
 
 这会：
 - 从 npm 包同步 skills/ 和 .shared/ 到当前目录
-- 为所有 skills 生成 AI 助手的输出文件（.windsurf, .claude, .cursor, .github）
+- 为所有 skills 生成**指定 AI 助手**的输出文件
+  - `--ai windsurf` → 只生成 `.windsurf/workflows/`
+  - `--ai claude` → 只生成 `.claude/skills/`
+  - `--ai all` → 生成所有目标
 - 保存初始化状态到 .neo-skill.json
 
 **2. 使用 skill-creator 创建新 skill**
@@ -103,7 +106,9 @@ omni-skill install ./skills
 
 这会：
 - 复制 skill 到当前目录的 skills/ 文件夹
-- 为该 skill 生成所有 AI 助手的输出文件
+- 为该 skill 生成**所有 AI 助手**的输出文件（.windsurf, .claude, .cursor, .github）
+
+**注意**：与 `init` 不同，`install` 命令总是生成所有 AI 目标的输出，以确保最大兼容性。
 
 **4. 更新 npm 包**
 ```bash

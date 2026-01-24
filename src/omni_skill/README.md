@@ -25,9 +25,14 @@ omni-skill init --ai all
 
 **What it does:**
 1. Syncs skills/ and .shared/ from npm package to current directory
-2. Installs all skills (generates outputs for all AI targets)
+2. Installs all skills (generates outputs for **specified AI targets only**)
 3. Writes VERSION files for each AI target
 4. Saves init state to .neo-skill.json
+
+**Example:**
+- `omni-skill init --ai windsurf` → Only generates `.windsurf/workflows/`
+- `omni-skill init --ai claude` → Only generates `.claude/skills/`
+- `omni-skill init --ai all` → Generates all targets (.windsurf, .claude, .cursor, .github)
 
 ### `omni-skill install <path>`
 Install skill(s) from a local directory.
@@ -43,7 +48,9 @@ omni-skill install ./skills
 
 **What it does:**
 1. Copies skill(s) to current directory's skills/ folder
-2. Generates outputs for all AI targets (.windsurf, .claude, .cursor, .github)
+2. Generates outputs for **all AI targets** (.windsurf, .claude, .cursor, .github)
+
+**Note:** Unlike `init`, the `install` command always generates outputs for all AI targets to ensure maximum compatibility.
 
 ### `omni-skill update`
 Update npm package and re-initialize skills.

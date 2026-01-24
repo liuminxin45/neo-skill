@@ -4,7 +4,7 @@ import argparse
 import json
 import shutil
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 
 from skill_creator.cli import cmd_generate
 
@@ -192,10 +192,15 @@ def _generate_outputs_best_effort(pkg_root: Path, cwd: Path) -> None:
             print(f"  Skipping generator for {rel} (exit {e.code})")
 
 
-def _install_skills_from_dir(skills_dir: Path, cwd: Path) -> int:
+def _install_skills_from_dir(skills_dir: Path, cwd: Path, selected_ais: Optional[List[str]] = None) -> int:
     """
     Install skills from a directory (either from npm package or local path).
-    Generates outputs for all AI targets.
+    Generates outputs for specified AI targets.
+    
+    Args:
+        skills_dir: Directory containing skills
+        cwd: Current working directory
+        selected_ais: List of AI targets to generate for. If None, generates for all targets.
     """
     if not skills_dir.exists():
         print(f"Skills directory not found: {skills_dir}")
@@ -205,6 +210,37 @@ def _install_skills_from_dir(skills_dir: Path, cwd: Path) -> int:
     if not specs:
         print(f"No skillspec.json found in: {skills_dir}")
         return 1
+    
+    # Determine target mapping: AI assistant -> skill-creator target
+    ai_to_target = {
+        "windsurf": "windsurf",
+        "claude": "claude",
+        "cursor": "cursor",
+        "antigravity": "github",
+        "copilot": "github",
+        "kiro": "github",
+        "codex": "github",
+        "qoder": "github",
+        "roocode": "github",
+        "gemini": "github",
+        "trae": "github",
+        "opencode": "github",
+        "continue": "github",
+    }
+    
+    # Determine which targets to generate
+    if selected_ais is None:
+        # Generate all targets
+        generate_all_targets = True
+        targets_list = None
+    else:
+        # Map AI assistants to skill-creator targets
+        targets_set = set()
+        for ai in selected_ais:
+            target = ai_to_target.get(ai, "windsurf")
+            targets_set.add(target)
+        targets_list = sorted(targets_set)
+        generate_all_targets = False
     
     print(f"\nInstalling {len(specs)} skill(s) from {skills_dir} ...")
     for spec_path in specs:
@@ -221,11 +257,18 @@ def _install_skills_from_dir(skills_dir: Path, cwd: Path) -> int:
             shutil.copytree(spec_path.parent, dest_skill_dir)
             print(f"    Copied to: {dest_skill_dir}")
         
-        # Generate outputs for all targets
+        # Generate outputs for specified targets
         try:
-            ns = argparse.Namespace(repo_root=str(cwd), spec=str(cwd / "skills" / skill_name / "skillspec.json"), all=True)
-            cmd_generate(ns)
-            print(f"    Generated outputs for all targets")
+            if generate_all_targets:
+                ns = argparse.Namespace(repo_root=str(cwd), spec=str(cwd / "skills" / skill_name / "skillspec.json"), all=True)
+                cmd_generate(ns)
+                print(f"    Generated outputs for all targets")
+            else:
+                # Generate for each target separately
+                for target in targets_list:
+                    ns = argparse.Namespace(repo_root=str(cwd), spec=str(cwd / "skills" / skill_name / "skillspec.json"), all=False, target=target)
+                    cmd_generate(ns)
+                print(f"    Generated outputs for: {', '.join(targets_list)}")
         except SystemExit as e:
             print(f"    Warning: Generator failed (exit {e.code})")
     
@@ -242,10 +285,10 @@ def _handle_init(selected_ais: List[str], mode: str) -> int:
     print("Initializing skills in:", cwd)
     _perform_sync(pkg_root, cwd, sync_pairs)
     
-    # Install all skills from npm package
+    # Install all skills from npm package with specified AI targets
     pkg_skills_dir = pkg_root / "skills"
     if pkg_skills_dir.exists():
-        _install_skills_from_dir(pkg_skills_dir, cwd)
+        _install_skills_from_dir(pkg_skills_dir, cwd, selected_ais=selected_ais)
     
     _write_version_files(cwd, effective_ais, version)
     print("\nDone! neo-skill initialized.")
@@ -271,6 +314,8 @@ def _cmd_install(args: argparse.Namespace) -> int:
     """
     Install skill(s) from a local directory.
     Usage: omni-skill install <path-to-skill-or-skills-dir>
+    
+    Note: install command always generates outputs for all AI targets.
     """
     cwd = Path.cwd().resolve()
     skill_path = Path(args.path).resolve()
@@ -280,13 +325,13 @@ def _cmd_install(args: argparse.Namespace) -> int:
     
     # Check if it's a single skill directory (contains skillspec.json)
     if (skill_path / "skillspec.json").exists():
-        # Single skill
+        # Single skill - generate for all targets
         temp_skills_dir = skill_path.parent
-        return _install_skills_from_dir(temp_skills_dir, cwd)
+        return _install_skills_from_dir(temp_skills_dir, cwd, selected_ais=None)
     
     # Check if it's a skills directory (contains subdirs with skillspec.json)
     elif skill_path.is_dir():
-        return _install_skills_from_dir(skill_path, cwd)
+        return _install_skills_from_dir(skill_path, cwd, selected_ais=None)
     
     else:
         raise SystemExit(f"Invalid path: {skill_path}. Must be a skill directory or skills directory.")

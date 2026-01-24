@@ -1,6 +1,6 @@
 {
   "name": "neo-skill",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec.",
   "license": "MIT",
   "bin": {
