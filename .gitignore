@@ -38,6 +38,17 @@ coverage/
 .cursor/
 .windsurf/
 .github/skills/
+.agent/
+.codebuddy/
+.codex/
+.continue/
+.gemini/
+.kiro/
+.opencode/
+.qoder/
+.roo/
+.trae/
+.github/prompts/
 
 # .shared/ is gitignored EXCEPT skill-creator core (versioned)
 .shared/*
@@ -53,4 +64,4 @@ Thumbs.db
 
 # lock files (npm package project)
 package-lock.json
-
+*.tgz

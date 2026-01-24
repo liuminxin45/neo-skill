@@ -1,10 +1,14 @@
 {
   "name": "neo-skill",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec.",
   "license": "MIT",
-  "main": "src/skill_creator/__init__.py",
+  "bin": {
+    "omni-skill": "bin/omni-skill.js",
+    "skill-creator": "bin/skill-creator.js"
+  },
   "files": [
+    "bin/**",
     "src/**",
     "skills/**",
     ".shared/**",
@@ -15,9 +19,7 @@
     "README.md",
     "pyproject.toml"
   ],
-  "scripts": {
-    "postinstall": "pip install -e . 2>/dev/null || python -m pip install -e . 2>/dev/null || echo 'Warning: Python package installation failed. Please run: pip install neo-skill'"
-  },
+  "scripts": {},
   "engines": {
     "node": ">=16"
   }
