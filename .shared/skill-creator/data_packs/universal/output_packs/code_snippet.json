@@ -1,0 +1,47 @@
+{
+  "id": "code_snippet",
+  "name": "Code Snippet",
+  "description": "用于输出脚本/代码块",
+  "template": {
+    "output_structure": {
+      "type": "code",
+      "fields": [
+        {
+          "name": "language",
+          "description": "编程语言",
+          "required": true
+        },
+        {
+          "name": "code",
+          "description": "代码内容",
+          "required": true
+        },
+        {
+          "name": "usage",
+          "description": "使用说明",
+          "required": false
+        }
+      ]
+    },
+    "workflow_pattern": [
+      {
+        "step": "analyze_requirements",
+        "description": "分析需求"
+      },
+      {
+        "step": "generate_code",
+        "description": "生成代码"
+      },
+      {
+        "step": "output_code",
+        "description": "输出代码（文件/stdout）"
+      }
+    ],
+    "recommended_libraries": []
+  },
+  "acceptance_template": [
+    "生成的代码语法正确",
+    "代码可执行且满足需求",
+    "包含必要的注释和使用说明"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "description": "Tool Catalog 索引（库推荐库，可选增强）",
+  "items": {
+    "feedparser": {
+      "file": "feedparser.json",
+      "tags": ["rss", "xml_parse"],
+      "keywords": ["rss", "atom", "feed", "parse"]
+    },
+    "requests": {
+      "file": "requests.json",
+      "tags": ["http_fetch"],
+      "keywords": ["http", "request", "api", "fetch"]
+    },
+    "beautifulsoup4": {
+      "file": "beautifulsoup4.json",
+      "tags": ["html_parse"],
+      "keywords": ["html", "parse", "scrape", "beautifulsoup"]
+    },
+    "schedule": {
+      "file": "schedule.json",
+      "tags": ["scheduler_local"],
+      "keywords": ["schedule", "cron", "periodic", "task"]
+    }
+  }
+}

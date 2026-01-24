@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "description": "最小 Checklist 索引（必需，不可禁用）",
+  "items": {
+    "automation_basic": {
+      "file": "automation_basic.json",
+      "task_types": ["automation", "scheduled_task", "monitoring"],
+      "tags": ["automation", "scheduler_local"],
+      "keywords": ["automation", "workflow", "task"]
+    },
+    "web_scraping_basic": {
+      "file": "web_scraping_basic.json",
+      "task_types": ["web_scraping", "rss_monitoring"],
+      "tags": ["http_fetch", "html_parse", "rss"],
+      "keywords": ["web", "scrape", "fetch", "rss"]
+    },
+    "notification_basic": {
+      "file": "notification_basic.json",
+      "task_types": ["notification"],
+      "tags": ["email_smtp"],
+      "keywords": ["email", "notify", "alert"]
+    }
+  }
+}

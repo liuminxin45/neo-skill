@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "description": "Skill 输出的 schema 定义（用于校验）",
+  "required_fields": [
+    "name",
+    "description",
+    "triggers",
+    "workflow_steps",
+    "output_pack"
+  ],
+  "field_types": {
+    "name": "string",
+    "description": "string",
+    "triggers": "array<string>",
+    "workflow_steps": "array<object>",
+    "output_pack": "string",
+    "references": "array<string>",
+    "scripts": "array<string>",
+    "assets": "array<string>"
+  },
+  "workflow_step_schema": {
+    "required_fields": ["id", "title", "kind"],
+    "field_types": {
+      "id": "string",
+      "title": "string",
+      "kind": "enum[action,gate,branch]",
+      "commands": "array<string>",
+      "notes": "string"
+    }
+  },
+  "validation_rules": [
+    {
+      "rule": "name_kebab_case",
+      "description": "name 必须是 kebab-case"
+    },
+    {
+      "rule": "triggers_min_3",
+      "description": "triggers 至少 3 条"
+    },
+    {
+      "rule": "workflow_steps_min_1",
+      "description": "workflow_steps 至少 1 个"
+    },
+    {
+      "rule": "output_pack_exists",
+      "description": "output_pack 必须是已知的 pack"
+    }
+  ]
+}

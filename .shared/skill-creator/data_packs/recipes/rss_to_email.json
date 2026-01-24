@@ -1,0 +1,114 @@
+{
+  "id": "rss_to_email",
+  "name": "RSS Feed to Email",
+  "description": "抓取 RSS/Atom feed 并发送邮件通知的成熟方案",
+  "task_types": ["rss_monitoring", "notification", "scheduled_task"],
+  "tags": ["rss", "email_smtp", "scheduler_local"],
+  "workflow_steps": [
+    {
+      "id": "fetch_feed",
+      "title": "抓取 RSS Feed",
+      "kind": "action",
+      "description": "使用 feedparser 解析 RSS/Atom feed",
+      "commands": [],
+      "notes": "处理网络超时、解析错误、空 feed 等情况"
+    },
+    {
+      "id": "filter_new",
+      "title": "过滤新条目",
+      "kind": "action",
+      "description": "与上次抓取结果对比，找出新条目",
+      "commands": [],
+      "notes": "需要持久化上次抓取的条目 ID 或时间戳"
+    },
+    {
+      "id": "format_email",
+      "title": "格式化邮件内容",
+      "kind": "action",
+      "description": "将新条目格式化为邮件正文",
+      "commands": [],
+      "notes": "包含标题、链接、摘要、发布时间"
+    },
+    {
+      "id": "send_email",
+      "title": "发送邮件",
+      "kind": "action",
+      "description": "通过 SMTP 发送邮件",
+      "commands": [],
+      "notes": "处理发送失败、凭证错误等情况"
+    }
+  ],
+  "recommended_libraries": [
+    {
+      "name": "feedparser",
+      "purpose": "解析 RSS/Atom feed",
+      "reason": "成熟稳定，支持多种 feed 格式",
+      "pypi_link": "https://pypi.org/project/feedparser/",
+      "docs_link": "https://feedparser.readthedocs.io/",
+      "fallback": "使用 requests + xml.etree.ElementTree 手动解析"
+    },
+    {
+      "name": "smtplib",
+      "purpose": "发送邮件",
+      "reason": "Python 内置库，无需额外依赖",
+      "pypi_link": "https://docs.python.org/3/library/smtplib.html",
+      "docs_link": "https://docs.python.org/3/library/smtplib.html",
+      "builtin": true
+    }
+  ],
+  "config_keys": [
+    {
+      "key": "feed_url",
+      "description": "RSS feed URL",
+      "required": true,
+      "example": "https://example.com/feed.xml"
+    },
+    {
+      "key": "email_to",
+      "description": "收件人邮箱",
+      "required": true,
+      "example": "user@example.com"
+    },
+    {
+      "key": "email_from",
+      "description": "发件人邮箱",
+      "required": true,
+      "example": "bot@example.com"
+    },
+    {
+      "key": "smtp_server",
+      "description": "SMTP 服务器地址",
+      "required": true,
+      "example": "smtp.gmail.com"
+    },
+    {
+      "key": "smtp_port",
+      "description": "SMTP 端口",
+      "required": false,
+      "default": "587"
+    },
+    {
+      "key": "state_file",
+      "description": "状态文件路径（记录已发送条目）",
+      "required": false,
+      "default": ".rss_state.json"
+    }
+  ],
+  "acceptance_template": [
+    "成功抓取 feed 并解析出条目",
+    "只发送新条目，不重复发送",
+    "feed 无新条目时不发送邮件",
+    "feed 抓取失败时记录错误但不崩溃",
+    "邮件发送失败时记录错误"
+  ],
+  "assumptions": [
+    "可以联网访问 RSS feed",
+    "有可用的 SMTP 服务器",
+    "可以在本地写入状态文件"
+  ],
+  "risks": [
+    "feed 格式变化可能导致解析失败",
+    "SMTP 凭证过期或被封禁",
+    "状态文件损坏导致重复发送"
+  ]
+}

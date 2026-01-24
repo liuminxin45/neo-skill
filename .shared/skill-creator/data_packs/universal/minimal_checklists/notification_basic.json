@@ -1,0 +1,35 @@
+{
+  "id": "notification_basic",
+  "name": "Notification Basic Checklist",
+  "description": "通知发送的基本可靠性检查",
+  "rules": [
+    {
+      "id": "credentials",
+      "title": "凭证安全",
+      "description": "不要硬编码邮箱密码，使用环境变量或配置文件",
+      "severity": "error",
+      "example": "password = os.getenv('EMAIL_PASSWORD')"
+    },
+    {
+      "id": "send_failure",
+      "title": "发送失败处理",
+      "description": "邮件发送失败时记录错误，不应导致整个流程崩溃",
+      "severity": "error",
+      "example": "try: send_email() except SMTPException as e: logger.error(e)"
+    },
+    {
+      "id": "empty_message",
+      "title": "空消息处理",
+      "description": "无数据时，决定是发送空消息还是跳过",
+      "severity": "warning",
+      "example": "if not message_body: return  # 或发送占位符"
+    },
+    {
+      "id": "recipient_validation",
+      "title": "收件人验证",
+      "description": "验证收件人邮箱格式",
+      "severity": "warning",
+      "example": "使用正则或 email-validator 库"
+    }
+  ]
+}

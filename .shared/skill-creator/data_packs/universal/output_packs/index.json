@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "description": "Output Packs 索引（输出格式包，必需且不可禁用）",
+  "items": {
+    "plain_text_message": {
+      "file": "plain_text_message.json",
+      "task_types": ["notification", "monitoring", "scheduled_task"],
+      "tags": ["email_smtp", "text_process"],
+      "keywords": ["email", "message", "notify", "alert"]
+    },
+    "markdown_report": {
+      "file": "markdown_report.json",
+      "task_types": ["report_generation", "monitoring", "data_transformation"],
+      "tags": ["markdown", "report_gen"],
+      "keywords": ["report", "summary", "markdown", "document"]
+    },
+    "json_result": {
+      "file": "json_result.json",
+      "task_types": ["data_transformation", "web_scraping", "automation"],
+      "tags": ["json_parse", "data_transform"],
+      "keywords": ["json", "api", "structured", "machine"]
+    },
+    "code_snippet": {
+      "file": "code_snippet.json",
+      "task_types": ["automation", "deployment"],
+      "tags": ["automation", "file_write"],
+      "keywords": ["script", "code", "executable"]
+    },
+    "generic": {
+      "file": "generic.json",
+      "task_types": ["automation"],
+      "tags": [],
+      "keywords": ["generic", "fallback"]
+    }
+  }
+}

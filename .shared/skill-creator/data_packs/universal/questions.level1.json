@@ -1,0 +1,81 @@
+{
+  "version": "1.0",
+  "description": "Level 1 固定问题集（5-7问，覆盖核心槽位）",
+  "questions": [
+    {
+      "slot": "goal",
+      "required": true,
+      "prompt": "这个 skill 的一句话目标是什么（动词开头，面向可重复任务）？",
+      "answer_type": "text",
+      "stop_condition": "长度 >= 10 字符且包含动词"
+    },
+    {
+      "slot": "input",
+      "required": true,
+      "prompt": "需要哪些输入（URL/文件/配置等），从哪里来？请至少给 1 个示例。",
+      "answer_type": "examples",
+      "stop_condition": "至少 1 个具体示例"
+    },
+    {
+      "slot": "output",
+      "required": true,
+      "prompt": "期望输出是什么形态？",
+      "answer_type": "enum",
+      "options": [
+        {
+          "value": "A",
+          "label": "纯文本消息（邮件/IM）",
+          "recommended": true,
+          "reason": "最简单，适合通知类任务"
+        },
+        {
+          "value": "B",
+          "label": "Markdown 报告",
+          "recommended": false,
+          "reason": "适合需要格式化的报告"
+        },
+        {
+          "value": "C",
+          "label": "JSON 结果",
+          "recommended": false,
+          "reason": "适合机器可消费的输出"
+        },
+        {
+          "value": "D",
+          "label": "代码片段/脚本",
+          "recommended": false,
+          "reason": "适合生成可执行代码"
+        },
+        {
+          "value": "E",
+          "label": "其他（请说明）",
+          "recommended": false
+        }
+      ],
+      "stop_condition": "已选择或描述清楚"
+    },
+    {
+      "slot": "environment",
+      "required": false,
+      "prompt": "运行环境有哪些约束（本地/CI/联网/权限/代理等）？",
+      "answer_type": "text",
+      "default": "本地环境，可联网",
+      "stop_condition": "无矛盾约束"
+    },
+    {
+      "slot": "constraints",
+      "required": false,
+      "prompt": "硬约束有哪些（频率/合规/不可做的事）？",
+      "answer_type": "text",
+      "default": "无特殊约束",
+      "stop_condition": "已明确或使用默认"
+    },
+    {
+      "slot": "acceptance",
+      "required": true,
+      "prompt": "请提供至少 2 条验收用例（必须包含'无数据'或'失败'场景之一）",
+      "answer_type": "examples",
+      "stop_condition": "至少 2 条，且包含失败/无数据场景"
+    }
+  ]
+}

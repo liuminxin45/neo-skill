@@ -1,0 +1,14 @@
+{
+  "id": "beautifulsoup4",
+  "name": "beautifulsoup4",
+  "purpose": "解析 HTML/XML",
+  "reason": "最流行的 HTML 解析库，容错性强，API 简洁",
+  "pypi_link": "https://pypi.org/project/beautifulsoup4/",
+  "docs_link": "https://www.crummy.com/software/BeautifulSoup/bs4/doc/",
+  "github_link": "https://code.launchpad.net/beautifulsoup",
+  "minimal_usage_notes": "from bs4 import BeautifulSoup\nsoup = BeautifulSoup(html, 'html.parser')\ntitle = soup.find('h1').text\nlinks = [a['href'] for a in soup.find_all('a')]\n# 支持 CSS 选择器: soup.select('.class')\n# 容错性强，可处理不规范的 HTML",
+  "fallback": "使用 html.parser (Python 内置) 或 lxml",
+  "tags": ["html_parse"],
+  "stability": "high",
+  "last_updated": "2023"
+}

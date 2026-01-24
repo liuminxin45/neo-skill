@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "description": "Recipe/Blueprint 索引（可选增强）",
+  "items": {
+    "rss_to_email": {
+      "file": "rss_to_email.json",
+      "task_types": ["rss_monitoring", "notification", "scheduled_task"],
+      "tags": ["rss", "email_smtp", "scheduler_local"],
+      "keywords": ["rss", "feed", "email", "notify", "daily"]
+    },
+    "web_scrape_report": {
+      "file": "web_scrape_report.json",
+      "task_types": ["web_scraping", "report_generation"],
+      "tags": ["http_fetch", "html_parse", "markdown", "report_gen"],
+      "keywords": ["scrape", "web", "report", "summary"]
+    }
+  }
+}

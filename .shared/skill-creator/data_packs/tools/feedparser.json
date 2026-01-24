@@ -1,0 +1,14 @@
+{
+  "id": "feedparser",
+  "name": "feedparser",
+  "purpose": "解析 RSS/Atom feed",
+  "reason": "成熟稳定，支持多种 feed 格式，自动处理编码和格式差异",
+  "pypi_link": "https://pypi.org/project/feedparser/",
+  "docs_link": "https://feedparser.readthedocs.io/",
+  "github_link": "https://github.com/kurtmckee/feedparser",
+  "minimal_usage_notes": "import feedparser\nfeed = feedparser.parse('http://example.com/feed.xml')\nfor entry in feed.entries:\n    print(entry.title, entry.link)\n# 自动处理编码、日期解析、多种 feed 格式\n# 返回统一的数据结构，无需关心 RSS vs Atom 差异",
+  "fallback": "使用 requests + xml.etree.ElementTree 手动解析 XML",
+  "tags": ["rss", "xml_parse"],
+  "stability": "high",
+  "last_updated": "2023"
+}

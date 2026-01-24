@@ -1,0 +1,53 @@
+{
+  "id": "plain_text_message",
+  "name": "Plain Text Message",
+  "description": "用于邮件/IM 等纯文本消息输出",
+  "template": {
+    "output_structure": {
+      "type": "text",
+      "fields": [
+        {
+          "name": "subject",
+          "description": "消息主题/标题",
+          "required": true
+        },
+        {
+          "name": "body",
+          "description": "消息正文",
+          "required": true
+        },
+        {
+          "name": "recipients",
+          "description": "接收者列表",
+          "required": false
+        }
+      ]
+    },
+    "workflow_pattern": [
+      {
+        "step": "collect_data",
+        "description": "收集需要发送的数据"
+      },
+      {
+        "step": "format_message",
+        "description": "格式化为纯文本消息"
+      },
+      {
+        "step": "send_message",
+        "description": "发送消息（邮件/IM）"
+      }
+    ],
+    "recommended_libraries": [
+      {
+        "name": "smtplib",
+        "purpose": "发送邮件",
+        "builtin": true
+      }
+    ]
+  },
+  "acceptance_template": [
+    "成功发送包含正确数据的消息",
+    "无数据时发送空消息或跳过",
+    "发送失败时记录错误日志"
+  ]
+}

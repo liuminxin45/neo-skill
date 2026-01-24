@@ -1,11 +1,10 @@
 {
   "name": "neo-skill",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec.",
   "license": "MIT",
   "bin": {
-    "omni-skill": "bin/omni-skill.js",
-    "skill-creator": "bin/skill-creator.js"
+    "omni-skill": "bin/omni-skill.js"
   },
   "files": [
     "bin/**",

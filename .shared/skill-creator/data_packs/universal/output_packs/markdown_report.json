@@ -1,0 +1,47 @@
+{
+  "id": "markdown_report",
+  "name": "Markdown Report",
+  "description": "用于生成可读的 Markdown 报告",
+  "template": {
+    "output_structure": {
+      "type": "markdown",
+      "fields": [
+        {
+          "name": "title",
+          "description": "报告标题",
+          "required": true
+        },
+        {
+          "name": "sections",
+          "description": "报告章节列表",
+          "required": true
+        },
+        {
+          "name": "metadata",
+          "description": "元数据（生成时间等）",
+          "required": false
+        }
+      ]
+    },
+    "workflow_pattern": [
+      {
+        "step": "collect_data",
+        "description": "收集报告数据"
+      },
+      {
+        "step": "generate_markdown",
+        "description": "生成 Markdown 格式"
+      },
+      {
+        "step": "save_or_send",
+        "description": "保存到文件或发送"
+      }
+    ],
+    "recommended_libraries": []
+  },
+  "acceptance_template": [
+    "生成包含所有章节的完整报告",
+    "无数据时生成空报告或占位符",
+    "Markdown 格式正确可渲染"
+  ]
+}

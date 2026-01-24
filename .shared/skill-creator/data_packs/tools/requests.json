@@ -1,0 +1,14 @@
+{
+  "id": "requests",
+  "name": "requests",
+  "purpose": "发起 HTTP 请求",
+  "reason": "Python 最流行的 HTTP 库，API 简洁，功能完善",
+  "pypi_link": "https://pypi.org/project/requests/",
+  "docs_link": "https://requests.readthedocs.io/",
+  "github_link": "https://github.com/psf/requests",
+  "minimal_usage_notes": "import requests\nresponse = requests.get('https://api.example.com', timeout=30)\nresponse.raise_for_status()  # 检查状态码\ndata = response.json()  # 或 response.text\n# 支持 headers, params, auth, proxies 等\n# 自动处理 cookies, redirects, encoding",
+  "fallback": "使用 urllib (Python 内置)，但 API 较复杂",
+  "tags": ["http_fetch"],
+  "stability": "high",
+  "last_updated": "2023"
+}

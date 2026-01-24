@@ -1,0 +1,53 @@
+{
+  "id": "json_result",
+  "name": "JSON Result",
+  "description": "用于机器可消费的 JSON 输出",
+  "template": {
+    "output_structure": {
+      "type": "json",
+      "fields": [
+        {
+          "name": "status",
+          "description": "执行状态（success/error）",
+          "required": true
+        },
+        {
+          "name": "data",
+          "description": "结果数据",
+          "required": true
+        },
+        {
+          "name": "metadata",
+          "description": "元数据（时间戳等）",
+          "required": false
+        }
+      ]
+    },
+    "workflow_pattern": [
+      {
+        "step": "collect_data",
+        "description": "收集数据"
+      },
+      {
+        "step": "structure_json",
+        "description": "结构化为 JSON"
+      },
+      {
+        "step": "output_json",
+        "description": "输出 JSON（文件/stdout/API）"
+      }
+    ],
+    "recommended_libraries": [
+      {
+        "name": "json",
+        "purpose": "JSON 序列化",
+        "builtin": true
+      }
+    ]
+  },
+  "acceptance_template": [
+    "输出有效的 JSON 格式",
+    "无数据时输出空数组或 null",
+    "错误时 status=error 且包含错误信息"
+  ]
+}

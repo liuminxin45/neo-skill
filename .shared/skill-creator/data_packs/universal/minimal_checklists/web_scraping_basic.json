@@ -1,0 +1,42 @@
+{
+  "id": "web_scraping_basic",
+  "name": "Web Scraping Basic Checklist",
+  "description": "网页抓取的基本可靠性检查",
+  "rules": [
+    {
+      "id": "user_agent",
+      "title": "设置 User-Agent",
+      "description": "避免被识别为爬虫而被拒绝",
+      "severity": "warning",
+      "example": "headers = {'User-Agent': 'Mozilla/5.0 ...'}"
+    },
+    {
+      "id": "rate_limit",
+      "title": "速率限制",
+      "description": "避免过于频繁的请求",
+      "severity": "warning",
+      "example": "time.sleep(1) 或使用 ratelimit 库"
+    },
+    {
+      "id": "status_check",
+      "title": "检查 HTTP 状态码",
+      "description": "检查响应状态码，处理 4xx/5xx 错误",
+      "severity": "error",
+      "example": "response.raise_for_status()"
+    },
+    {
+      "id": "encoding",
+      "title": "处理编码",
+      "description": "正确处理页面编码，避免乱码",
+      "severity": "warning",
+      "example": "response.encoding = response.apparent_encoding"
+    },
+    {
+      "id": "empty_response",
+      "title": "处理空响应",
+      "description": "检查响应是否为空或无效",
+      "severity": "error",
+      "example": "if not response.text: return None"
+    }
+  ]
+}

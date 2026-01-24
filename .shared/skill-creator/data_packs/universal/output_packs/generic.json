@@ -1,0 +1,37 @@
+{
+  "id": "generic",
+  "name": "Generic Output",
+  "description": "通用输出格式（兜底）",
+  "template": {
+    "output_structure": {
+      "type": "flexible",
+      "fields": [
+        {
+          "name": "result",
+          "description": "执行结果",
+          "required": true
+        }
+      ]
+    },
+    "workflow_pattern": [
+      {
+        "step": "execute_task",
+        "description": "执行任务"
+      },
+      {
+        "step": "format_output",
+        "description": "格式化输出"
+      },
+      {
+        "step": "deliver_output",
+        "description": "交付输出"
+      }
+    ],
+    "recommended_libraries": []
+  },
+  "acceptance_template": [
+    "任务执行成功",
+    "输出格式符合用户需求",
+    "错误时有清晰的错误信息"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "automation_basic",
+  "name": "Automation Basic Checklist",
+  "description": "自动化任务的基本可靠性检查（必需）",
+  "rules": [
+    {
+      "id": "timeout",
+      "title": "设置超时",
+      "description": "所有网络请求和长时间操作必须设置超时",
+      "severity": "error",
+      "example": "requests.get(url, timeout=30)"
+    },
+    {
+      "id": "retry",
+      "title": "实现重试机制",
+      "description": "对于可能失败的操作（网络请求、文件读写），实现重试机制",
+      "severity": "warning",
+      "example": "使用 tenacity 或手动实现 retry 逻辑"
+    },
+    {
+      "id": "error_handling",
+      "title": "错误处理",
+      "description": "所有关键操作必须有 try-except，并记录错误",
+      "severity": "error",
+      "example": "try: ... except Exception as e: logger.error(f'Failed: {e}')"
+    },
+    {
+      "id": "logging",
+      "title": "日志记录",
+      "description": "记录关键步骤和错误，便于调试",
+      "severity": "warning",
+      "example": "import logging; logger = logging.getLogger(__name__)"
+    },
+    {
+      "id": "graceful_degradation",
+      "title": "优雅降级",
+      "description": "无数据或失败时，不应崩溃，而是返回空结果或默认值",
+      "severity": "error",
+      "example": "if not data: return default_value"
+    }
+  ]
+}

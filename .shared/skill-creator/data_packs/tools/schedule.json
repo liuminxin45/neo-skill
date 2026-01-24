@@ -1,0 +1,14 @@
+{
+  "id": "schedule",
+  "name": "schedule",
+  "purpose": "简单的任务调度",
+  "reason": "轻量级，API 简洁，适合简单的定时任务",
+  "pypi_link": "https://pypi.org/project/schedule/",
+  "docs_link": "https://schedule.readthedocs.io/",
+  "github_link": "https://github.com/dbader/schedule",
+  "minimal_usage_notes": "import schedule\nimport time\ndef job():\n    print('Running task...')\nschedule.every().day.at('10:00').do(job)\nwhile True:\n    schedule.run_pending()\n    time.sleep(60)\n# 支持 every().hour, every().monday, every(10).minutes 等",
+  "fallback": "使用系统 cron (Linux/Mac) 或 Task Scheduler (Windows)",
+  "tags": ["scheduler_local"],
+  "stability": "high",
+  "last_updated": "2023"
+}
