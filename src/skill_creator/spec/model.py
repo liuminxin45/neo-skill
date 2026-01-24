@@ -63,6 +63,7 @@ class SkillSpec:
     references: List[str] = field(default_factory=list)
     scripts: List[str] = field(default_factory=list)
     assets: List[str] = field(default_factory=list)
+    libraries: List[Any] = field(default_factory=list)  # Recommended third-party libraries
 
     @staticmethod
     def from_path(path: Path) -> "SkillSpec":
@@ -84,6 +85,7 @@ class SkillSpec:
             references=[str(x) for x in _as_list(d.get("references"))],
             scripts=[str(x) for x in _as_list(d.get("scripts"))],
             assets=[str(x) for x in _as_list(d.get("assets"))],
+            libraries=_as_list(d.get("libraries")),
         )
 
     def validate_basic(self) -> List[str]:

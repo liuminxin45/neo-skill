@@ -43,17 +43,22 @@
 }
 ```
 
-## 添加新 Tool
+## 如何添加新工具
 
-1. 创建 `{tool_id}.json` 文件
-2. 更新 `index.json`，添加索引条目：
-   ```json
-   {
-     "tool_id": {
-       "file": "tool_id.json",
-       "tags": ["..."],
-       "keywords": ["..."]
-     }
+1. 创建工具详情文件 `{tool-name}.json`
+2. 在 `index.json` 中添加索引条目
+3. 确保 tags 与 capability_tags 设计一致
+
+## 自动推荐机制
+
+skill-creator 会**自动推荐**合适的第三方库，无需用户手动指定：
+
+- **自动触发**：基于 `task_type` 和 `capability_tags` 自动匹配
+- **智能排序**：返回 top-5 最匹配的工具库
+- **多处展示**：推荐信息会在 Plan、Workflow Steps 和最终输出中展示
+- **安全降级**：如果没有匹配的库，不影响 skill 生成
+
+详见：`docs/skill-creator-refactoring/LIBRARY_RECOMMENDATION.md`
    }
    ```
 3. 无需修改代码，系统会自动检索

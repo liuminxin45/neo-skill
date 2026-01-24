@@ -133,6 +133,22 @@ class SkillBuilder:
                 }
             ]
         
+        # 添加三方库推荐信息到第一个步骤的 notes
+        if steps and ctx.plan and ctx.plan.libraries:
+            lib_notes = ["\n\n**推荐的第三方库**:"]
+            for lib in ctx.plan.libraries:
+                lib_notes.append(f"- `{lib.name}`: {lib.purpose}")
+                if lib.pypi_link:
+                    lib_notes.append(f"  - 安装: `pip install {lib.name}`")
+                if lib.docs_link:
+                    lib_notes.append(f"  - 文档: {lib.docs_link}")
+            
+            # 将库信息添加到第一个步骤的 notes
+            if steps[0].get("notes"):
+                steps[0]["notes"] += "\n".join(lib_notes)
+            else:
+                steps[0]["notes"] = "\n".join(lib_notes)
+        
         return steps
     
     def _generate_triggers(self, ctx: SkillCreatorContext) -> list[str]:

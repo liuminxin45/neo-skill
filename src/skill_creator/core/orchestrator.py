@@ -162,6 +162,18 @@ class PlanOrchestrator:
         summary_parts.append("")
         summary_parts.append(f"**输出形式**: {self._get_pack_description(output_pack)}")
         
+        # 添加推荐的三方库信息
+        libraries = self._get_recommended_libraries(ctx)
+        if libraries:
+            summary_parts.append("")
+            summary_parts.append("**推荐的第三方库**:")
+            for lib in libraries:
+                summary_parts.append(f"- `{lib.name}`: {lib.purpose}")
+                if lib.reason:
+                    summary_parts.append(f"  - 推荐理由: {lib.reason}")
+                if lib.pypi_link:
+                    summary_parts.append(f"  - PyPI: {lib.pypi_link}")
+        
         return "\n".join(summary_parts)
     
     def _get_pack_description(self, pack: str) -> str:

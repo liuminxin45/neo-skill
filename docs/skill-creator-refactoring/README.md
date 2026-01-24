@@ -4,6 +4,15 @@
 
 本次重构以"文件化 + 多层索引 + 按需加载"为核心设计，实现了一个稳定、低 token、低交互负担的 skill 生成系统。
 
+## 文档列表
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - 架构设计详解
+- [DIRECTORY_STRUCTURE.md](./DIRECTORY_STRUCTURE.md) - 目录结构说明
+- [END_TO_END_DEMO.md](./END_TO_END_DEMO.md) - 端到端演示
+- [LIBRARY_RECOMMENDATION.md](./LIBRARY_RECOMMENDATION.md) - 三方库自动推荐机制
+- [SUMMARY.md](./SUMMARY.md) - 重构总结邮件场景完整对话
+   - Doctor trace 示例
+
 ## 核心文档
 
 1. **[ARCHITECTURE.md](./ARCHITECTURE.md)** - 完整架构说明

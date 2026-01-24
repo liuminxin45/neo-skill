@@ -26,16 +26,46 @@ def render_windsurf_workflow_md(spec: SkillSpec) -> str:
         "",
     ]
 
-    # Prerequisites (if scripts exist)
-    if spec.scripts:
+    # Prerequisites (if scripts exist or libraries are used)
+    has_prerequisites = spec.scripts or (hasattr(spec, 'libraries') and spec.libraries)
+    if has_prerequisites:
         lines.extend([
             "## Prerequisites",
             "",
-            "```bash",
-            "python3 --version || python --version",
-            "```",
-            "",
         ])
+        
+        # Show Python version check
+        if spec.scripts:
+            lines.extend([
+                "```bash",
+                "python3 --version || python --version",
+                "```",
+                "",
+            ])
+        
+        # Show recommended libraries
+        if hasattr(spec, 'libraries') and spec.libraries:
+            lines.append("**推荐的第三方库**:")
+            lines.append("")
+            for lib in spec.libraries:
+                if isinstance(lib, dict):
+                    lib_name = lib.get('name', '')
+                    lib_purpose = lib.get('purpose', '')
+                    lib_pypi = lib.get('pypi_link', '')
+                    lines.append(f"- `{lib_name}`: {lib_purpose}")
+                    if lib_pypi:
+                        lines.append(f"  - 安装: `pip install {lib_name}`")
+                        lines.append(f"  - PyPI: {lib_pypi}")
+                else:
+                    lines.append(f"- `{lib}`")
+            lines.append("")
+            lines.extend([
+                "```bash",
+                "# 安装所有依赖",
+                "pip install " + " ".join([lib.get('name', lib) if isinstance(lib, dict) else lib for lib in spec.libraries]),
+                "```",
+                "",
+            ])
 
     # Triggers
     if spec.triggers:
