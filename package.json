@@ -9,6 +9,7 @@
   "files": [
     "bin/**",
     "src/**",
+    "data/**",
     "skills/**",
     ".shared/**",
     ".claude/**",

@@ -5,10 +5,10 @@
   "primary_target": "windsurf",
   "backward_compat": ["claude", "cursor", "github"],
   "questions": [
-    "你想实现什么目标？（一句话描述任务）",
-    "输入是什么？（文件/代码/数据/命令等）",
-    "运行环境？（OS/Shell/Runtime）",
-    "使用哪个 IDE/编辑器？（windsurf/cursor/vscode/generic）"
+    "你需要什么能力？（一句话描述目标，例如：需要一个开发 UI/UX 的 skill）",
+    "你的技术栈/平台是什么？（如 React/Vue/Next.js/SwiftUI/Flutter/HTML+Tailwind；不确定可回车）",
+    "硬约束有哪些？（如不可联网/必须离线/不可修改文件等；无则回车）",
+    "你使用哪个 IDE？（默认当前 IDE；不确定可回车）"
   ],
   "triggers": [
     "找第三方 skill",
@@ -27,21 +27,23 @@
         "title": "两级提问收集需求",
         "kind": "action",
         "commands": [],
-        "notes": "Level 1 固定 3-4 问（goal/input/env/ide）；Level 2 仅不确定时追问 1-2 个。详见 references/interview-protocol.md"
+        "notes": "优先少问：先用用户原始请求直接匹配；若已高置信命中则不要反问，直接给出 Top1-3。\n\n若信息不足，仅允许 1 轮补充提问（总问题数<=5），问完立即进入匹配，不要进入第二轮追问。"
       },
       {
         "id": "match",
         "title": "匹配第三方 unit",
         "kind": "action",
-        "commands": [],
-        "notes": "两阶段：粗筛（倒排索引）+ 精排（tag 覆盖率 + 约束过滤）。置信度 < 60% 必须拒绝并说明原因。详见 references/matching-algorithm.md"
+        "commands": [
+          "python -m skill_finder.cli match --goal \"<goal>\" --ide <ide> --format json"
+        ],
+        "notes": "优先使用内置第三方 registry（packages/units）作为事实来源进行匹配。\n\n匹配策略：\n- 先从用户 goal 里推断 tags/keywords（如 UI/UX/设计系统/原型/React 等），避免过多追问\n- 两阶段：粗筛（倒排索引或扫描 registry 文件降级）+ 精排（tag/keyword 覆盖率 + IDE 支持 + 约束过滤）\n- 置信度 < 60% 必须拒绝并说明原因\n\n当候选数量较少（例如 <=20）且语义需要判断时，可以把候选摘要（unit name/description/tags/keywords/IDE/README）作为输入交给 AI 做最终判定，但不得捏造“缺少 registry/索引”。"
       },
       {
         "id": "present",
         "title": "展示结果（Top 1-3 或拒绝）",
         "kind": "gate",
         "commands": [],
-        "notes": "命中：列出 unit + package + 匹配原因 + README 链接 + 使用方式。未命中：明确拒绝原因分类（no_candidates_by_tag/no_ide_support/incompatible_env/insufficient_info）"
+        "notes": "命中：列出 unit + package + 匹配原因 + README 链接 + 使用方式。\n未命中：明确拒绝原因分类（no_candidates_by_tag/no_ide_support/incompatible_env/insufficient_info）。\n禁止输出不实诊断（例如声称索引文件缺失），除非你已实际检查过本地文件。"
       },
       {
         "id": "install",

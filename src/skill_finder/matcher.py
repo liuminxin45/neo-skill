@@ -1,5 +1,6 @@
 """匹配算法实现 - 两阶段匹配"""
 
+import re
 from typing import List, Dict, Set
 from .models import SearchQuery, SearchResult, MatchResult
 from .registry import Registry
@@ -11,9 +12,67 @@ class Matcher:
     def __init__(self, registry: Registry, min_score: float = 0.6):
         self.registry = registry
         self.min_score = min_score
+
+    def _infer_tags_keywords(self, goal: str) -> Dict[str, List[str]]:
+        """从自然语言 goal 粗提取 tags/keywords（用于减少追问）"""
+        goal_lower = (goal or "").lower()
+
+        tag_map = {
+            "ui": "ui-design",
+            "ux": "ux-design",
+            "ui/ux": "ui-design",
+            "用户体验": "ux-design",
+            "原型": "ui-design",
+            "prototype": "ui-design",
+            "设计系统": "design-system",
+            "design system": "design-system",
+            "design token": "design-tokens",
+            "design tokens": "design-tokens",
+            "style guide": "style-guide",
+            "组件库": "component-library",
+            "component library": "component-library",
+            "landing": "web-design",
+            "落地页": "web-design",
+            "dashboard": "frontend",
+            "仪表板": "frontend",
+            "无障碍": "design-guidelines",
+            "accessibility": "design-guidelines",
+        }
+
+        tags: List[str] = []
+        for keyword, tag in tag_map.items():
+            if keyword in goal_lower and tag not in tags:
+                tags.append(tag)
+
+        keywords: List[str] = []
+        for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9\+\-\./#]*", goal or ""):
+            for part in re.split(r"[/_]+", token):
+                part = part.strip()
+                if part and part.lower() not in [k.lower() for k in keywords]:
+                    keywords.append(part)
+
+        synonyms = {
+            "ui/ux": ["ui", "ux"],
+            "原型": ["prototype"],
+            "落地页": ["landing page"],
+            "设计系统": ["design system", "design tokens"],
+        }
+        for k, vals in synonyms.items():
+            if k in goal_lower:
+                for v in vals:
+                    if v.lower() not in [x.lower() for x in keywords]:
+                        keywords.append(v)
+
+        return {"tags": tags, "keywords": keywords}
     
     def match(self, query: SearchQuery) -> SearchResult:
         """执行两阶段匹配"""
+        inferred = self._infer_tags_keywords(query.goal)
+        if not query.tags and inferred["tags"]:
+            query.tags = inferred["tags"]
+        if not query.keywords and inferred["keywords"]:
+            query.keywords = inferred["keywords"]
+
         candidates = self._coarse_filter(query)
         
         if not candidates:
@@ -54,6 +113,12 @@ class Matcher:
         if query.keywords:
             for kw in query.keywords:
                 unit_ids.update(self.registry.search_by_keyword(kw))
+
+        if not unit_ids:
+            if query.ide:
+                unit_ids = set(self.registry.search_by_ide(query.ide))
+            else:
+                unit_ids = set(self.registry.get_all_units())
         
         if query.ide:
             ide_units = set(self.registry.search_by_ide(query.ide))
