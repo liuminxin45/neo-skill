@@ -1,0 +1,29 @@
+{
+  "package_id": "gh:aider-chat/aider",
+  "name": "Aider",
+  "description": "AI pair programming in your terminal - multi-file editing, git integration, LLM-powered coding assistant",
+  "source": {
+    "type": "git",
+    "repo": "aider-chat/aider",
+    "ref": "main"
+  },
+  "docs": {
+    "readme": "https://github.com/aider-chat/aider/blob/main/README.md",
+    "homepage": "https://aider.chat",
+    "issues": "https://github.com/aider-chat/aider/issues"
+  },
+  "supported_ides": ["windsurf", "cursor", "generic"],
+  "install": {
+    "method": "pip",
+    "auto_install_cmd": "pip install aider-chat",
+    "manual_install_cmd": "pip install aider-chat",
+    "uninstall_cmd": "pip uninstall -y aider-chat",
+    "notes": "需要 Python 3.8+；需配置 OPENAI_API_KEY 或其他 LLM provider"
+  },
+  "units": [
+    "gh:aider-chat/aider#code-edit",
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "trust_level": "trusted",
+  "notes": "成熟开源项目，活跃维护"
+}

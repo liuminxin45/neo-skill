@@ -1,0 +1,31 @@
+{
+  "unit_id": "gh:aider-chat/aider#git-commit",
+  "package_id": "gh:aider-chat/aider",
+  "name": "Aider Git Commit Generator",
+  "description": "AI-generated commit messages based on code changes",
+  "capability_tags": [
+    "git-commit",
+    "commit-message",
+    "git-workflow"
+  ],
+  "keywords": [
+    "git commit",
+    "commit message",
+    "auto commit",
+    "aider"
+  ],
+  "ide_support": ["windsurf", "cursor", "generic"],
+  "entrypoints": [
+    {
+      "command": "aider --commit",
+      "args": "[--message MSG]",
+      "cwd": "git repo with staged changes",
+      "examples": [
+        "aider --commit",
+        "aider --commit --message 'feat: add user authentication'"
+      ]
+    }
+  ],
+  "usage_notes": "使用 Aider 的 commit 功能生成语义化 commit message。\n- 分析 staged changes\n- 生成符合 conventional commits 的消息\n- 可手动覆盖\n\n使用场景：\n- 快速生成规范 commit message\n- 团队统一 commit 风格",
+  "conflicts": null
+}

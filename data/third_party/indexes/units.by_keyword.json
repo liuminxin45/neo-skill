@@ -1,0 +1,30 @@
+{
+  "ai coding": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "aider": [
+    "gh:aider-chat/aider#code-edit",
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "auto commit": [
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "code assistant": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "commit message": [
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "edit multiple files": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "git commit": [
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "pair programming": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "refactor": [
+    "gh:aider-chat/aider#code-edit"
+  ]
+}

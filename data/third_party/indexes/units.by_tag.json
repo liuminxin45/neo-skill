@@ -1,0 +1,26 @@
+{
+  "code-generation": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "code-refactoring": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "commit-message": [
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "context-aware": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "git-commit": [
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "git-integration": [
+    "gh:aider-chat/aider#code-edit"
+  ],
+  "git-workflow": [
+    "gh:aider-chat/aider#git-commit"
+  ],
+  "multi-file-editing": [
+    "gh:aider-chat/aider#code-edit"
+  ]
+}

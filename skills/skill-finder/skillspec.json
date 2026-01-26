@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "name": "skill-finder",
+  "description": "发现/匹配/安装第三方 skill 库。支持两种模式：(1) 主动搜索（最小两级提问）；(2) 被动推荐（skill-creator 集成）。宁缺毋滥，未达阈值必须拒绝并说明原因。",
+  "primary_target": "windsurf",
+  "backward_compat": ["claude", "cursor", "github"],
+  "questions": [
+    "你想实现什么目标？（一句话描述任务）",
+    "输入是什么？（文件/代码/数据/命令等）",
+    "运行环境？（OS/Shell/Runtime）",
+    "使用哪个 IDE/编辑器？（windsurf/cursor/vscode/generic）"
+  ],
+  "triggers": [
+    "找第三方 skill",
+    "有没有现成的工具",
+    "推荐一个能力库",
+    "安装第三方能力",
+    "search for third-party skill",
+    "find existing tools"
+  ],
+  "freedom_level": "low",
+  "workflow": {
+    "type": "sequential",
+    "steps": [
+      {
+        "id": "interview",
+        "title": "两级提问收集需求",
+        "kind": "action",
+        "commands": [],
+        "notes": "Level 1 固定 3-4 问（goal/input/env/ide）；Level 2 仅不确定时追问 1-2 个。详见 references/interview-protocol.md"
+      },
+      {
+        "id": "match",
+        "title": "匹配第三方 unit",
+        "kind": "action",
+        "commands": [],
+        "notes": "两阶段：粗筛（倒排索引）+ 精排（tag 覆盖率 + 约束过滤）。置信度 < 60% 必须拒绝并说明原因。详见 references/matching-algorithm.md"
+      },
+      {
+        "id": "present",
+        "title": "展示结果（Top 1-3 或拒绝）",
+        "kind": "gate",
+        "commands": [],
+        "notes": "命中：列出 unit + package + 匹配原因 + README 链接 + 使用方式。未命中：明确拒绝原因分类（no_candidates_by_tag/no_ide_support/incompatible_env/insufficient_info）"
+      },
+      {
+        "id": "install",
+        "title": "安装（默认自动/可选手动）",
+        "kind": "action",
+        "commands": [],
+        "notes": "默认：执行 auto_install_cmd 并记录。手动：输出 manual_install_cmd 并记录（executed=false）。详见 references/install-modes.md"
+      },
+      {
+        "id": "record",
+        "title": "记录安装行为",
+        "kind": "action",
+        "commands": [],
+        "notes": "写入 ~/.omni-skill/install_records.json（或配置路径）。字段：timestamp/unit_id/package_id/mode/executed/result/error_summary/docs_links"
+      },
+      {
+        "id": "output",
+        "title": "输出使用方式",
+        "kind": "action",
+        "commands": [],
+        "notes": "展示 unit.entrypoints（原生命令/参数/示例）+ README 链接 + usage_notes"
+      }
+    ]
+  },
+  "references": [
+    "references/matching-algorithm.md",
+    "references/install-modes.md",
+    "references/interview-protocol.md",
+    "references/registry-schema.md"
+  ],
+  "scripts": [],
+  "assets": []
+}

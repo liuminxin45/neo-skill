@@ -1,0 +1,36 @@
+{
+  "unit_id": "gh:aider-chat/aider#code-edit",
+  "package_id": "gh:aider-chat/aider",
+  "name": "Aider Code Editing",
+  "description": "AI-powered multi-file code editing with context awareness and git integration",
+  "capability_tags": [
+    "code-generation",
+    "code-refactoring",
+    "multi-file-editing",
+    "git-integration",
+    "context-aware"
+  ],
+  "keywords": [
+    "aider",
+    "ai coding",
+    "pair programming",
+    "code assistant",
+    "refactor",
+    "edit multiple files"
+  ],
+  "ide_support": ["windsurf", "cursor", "generic"],
+  "entrypoints": [
+    {
+      "command": "aider",
+      "args": "[files...] [--model MODEL] [--message MSG]",
+      "cwd": "项目根目录（需要 git repo）",
+      "examples": [
+        "aider src/main.py src/utils.py",
+        "aider --model gpt-4 --message 'refactor authentication logic'",
+        "aider --yes --message 'add error handling to all API calls'"
+      ]
+    }
+  ],
+  "usage_notes": "Aider 在终端中运行，支持对话式编辑多个文件。\n- 自动追踪文件依赖\n- 生成 git commit\n- 支持多种 LLM（OpenAI/Anthropic/本地模型）\n- 可通过 --yes 跳过确认直接执行\n\n典型工作流：\n1. cd 到 git repo\n2. 运行 aider <files>\n3. 对话式描述需求\n4. Aider 自动编辑并 commit",
+  "conflicts": "与其他自动 commit 工具可能冲突；需要干净的 git 工作区"
+}
