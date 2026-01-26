@@ -35,7 +35,16 @@
         "title": "分析用户需求",
         "kind": "action",
         "commands": [],
-        "notes": "提取关键信息：任务类型、输出形态、约束条件、工具边界。可用搜索辅助：`python3 .shared/skill-creator/scripts/search.py \"<keywords>\" --skill-system`"
+        "notes": "提取关键信息：任务类型、输出形态、约束条件、工具边界。\n\n重要：在进入详细提问之前，必须优先检查是否已有高置信度第三方 skill 可用（通过 skill-finder）。可用搜索辅助：`python3 .shared/skill-creator/scripts/search.py \"<keywords>\" --skill-system`"
+      },
+      {
+        "id": "third-party-recommend",
+        "title": "优先推荐第三方 skill（skill-finder）",
+        "kind": "gate",
+        "commands": [
+          "python -m skill_finder.cli match --goal \"<user_request>\" --ide <ide> --format json --min-score 0.7"
+        ],
+        "notes": "规则：skill-creator 创建前必须先从第三方 registry 推荐。\n\n执行：用用户的原始请求作为 goal（<user_request>），调用 skill-finder 进行高置信匹配（min-score=0.7），并读取 JSON 输出。\n\n- 若命中（matches 非空）：\n  1) 展示 Top1 推荐（unit + package + score + README + 安装方式摘要）\n  2) 明确询问二次确认：是否安装该第三方 skill（y/n）\n  3) 若用户选择安装：输出 package.install.auto_install_cmd / manual_install_cmd，并建议用户转到 /skill-finder 完成安装与记录；本次不再继续创建 skill\n  4) 若用户拒绝安装：继续进入后续创建流程\n\n- 若未命中：直接进入后续创建流程\n\n注意：不得臆测“registry/索引缺失”；只基于命令返回的 JSON 做结论。"
       },
       {
         "id": "collect",

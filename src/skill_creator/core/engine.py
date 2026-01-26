@@ -68,7 +68,14 @@ class SkillCreatorEngine:
             "task_type": task_type,
             "capability_tags": capability_tags
         })
-        
+
+        third_party = self._recommend_third_party(user_request)
+        if third_party:
+            ctx.add_trace("third_party_recommendation", third_party["trace"])
+            rec = third_party.get("recommendation")
+            if rec is not None:
+                ctx.recommendations[third_party["provider_name"]] = rec
+
         # 2. Interview Engine - Level 1
         level1_questions = self.interview_engine.get_level1_questions(task_type, capability_tags)
         ctx.add_trace("level1_questions", {
@@ -81,6 +88,63 @@ class SkillCreatorEngine:
         # 在实际实现中，应该返回 questions 给调用者，等待用户回答
         
         return ctx
+
+    def _recommend_third_party(self, user_request: str) -> Optional[dict]:
+        try:
+            from skill_finder.recommender import Recommender
+            from skill_finder.models import SearchQuery as ThirdPartySearchQuery
+        except Exception:
+            return None
+
+        try:
+            recommender = Recommender(min_score=0.7)
+            result = recommender.recommend(ThirdPartySearchQuery(goal=user_request))
+            if not result.matches:
+                return None
+
+            m = result.matches[0]
+            from .types import Recommendation
+
+            rec = Recommendation(
+                provider_name="skill_finder",
+                confidence=float(m.score),
+                items=[
+                    {
+                        "unit_id": m.unit.unit_id,
+                        "unit_name": m.unit.name,
+                        "package_id": m.package.package_id,
+                        "package_name": m.package.name,
+                        "score": float(m.score),
+                        "reasons": m.reasons,
+                        "readme": m.package.docs.readme,
+                        "auto_install_cmd": m.package.install.auto_install_cmd,
+                        "manual_install_cmd": m.package.install.manual_install_cmd,
+                    }
+                ],
+                trace={
+                    "min_score": 0.7,
+                    "matched": True,
+                },
+            )
+
+            return {
+                "provider_name": "skill_finder",
+                "recommendation": rec,
+                "trace": {
+                    "matched": True,
+                    "top1": {
+                        "unit_id": m.unit.unit_id,
+                        "package_id": m.package.package_id,
+                        "score": float(m.score),
+                    },
+                },
+            }
+        except Exception as e:
+            return {
+                "provider_name": "skill_finder",
+                "recommendation": None,
+                "trace": {"matched": False, "error": str(e)},
+            }
     
     def continue_with_answers(
         self, 

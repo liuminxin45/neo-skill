@@ -110,7 +110,7 @@ class InterviewEngine:
             QuestionSpec(
                 slot="acceptance",
                 required=True,
-                prompt="请提供至少 2 条验收用例（必须包含"无数据"或"失败"场景之一）",
+                prompt="请提供至少 2 条验收用例（必须包含'无数据'或'失败'场景之一）",
                 answer_type=AnswerType.EXAMPLES,
                 level=1
             ),
