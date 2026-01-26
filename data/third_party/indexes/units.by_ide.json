@@ -1,14 +1,68 @@
 {
+  "antigravity": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "claude": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "codebuddy": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "codex": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "continue": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "copilot": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
   "cursor": [
     "gh:aider-chat/aider#code-edit",
-    "gh:aider-chat/aider#git-commit"
+    "gh:aider-chat/aider#git-commit",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "gemini": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
   ],
   "generic": [
     "gh:aider-chat/aider#code-edit",
-    "gh:aider-chat/aider#git-commit"
+    "gh:aider-chat/aider#git-commit",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "kiro": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "opencode": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "qoder": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "roocode": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "trae": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
   ],
   "windsurf": [
     "gh:aider-chat/aider#code-edit",
-    "gh:aider-chat/aider#git-commit"
+    "gh:aider-chat/aider#git-commit",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
   ]
 }

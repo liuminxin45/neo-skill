@@ -1,0 +1,57 @@
+{
+  "unit_id": "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design",
+  "package_id": "gh:nextlevelbuilder/ui-ux-pro-max-skill",
+  "name": "UI UX Pro Max - UI Design",
+  "description": "Professional UI/UX design and implementation across multiple platforms. Auto-generates design systems with 67 UI styles, 96 color palettes, 57 font pairings, and intelligent recommendations based on product type.",
+  "capability_tags": [
+    "ui-design",
+    "ux-design",
+    "design-system",
+    "frontend",
+    "web-design",
+    "mobile-design",
+    "responsive-design"
+  ],
+  "keywords": [
+    "ui",
+    "ux",
+    "design",
+    "landing page",
+    "dashboard",
+    "website",
+    "mobile app",
+    "react",
+    "nextjs",
+    "vue",
+    "tailwind",
+    "shadcn",
+    "swiftui",
+    "flutter"
+  ],
+  "ide_support": ["claude", "windsurf", "cursor", "antigravity", "copilot", "kiro", "codex", "qoder", "roocode", "gemini", "trae", "opencode", "continue", "codebuddy", "generic"],
+  "entrypoints": [
+    {
+      "command": "自然语言触发（Skill Mode）",
+      "args": "直接描述需求，如 'Build a landing page for my SaaS product'",
+      "cwd": "项目目录",
+      "examples": [
+        "Build a landing page for my SaaS product",
+        "Create a dashboard for healthcare analytics",
+        "Design a portfolio website with dark mode",
+        "Make a mobile app UI for e-commerce",
+        "Build a fintech banking app with dark theme"
+      ]
+    },
+    {
+      "command": "/ui-ux-pro-max（Workflow Mode）",
+      "args": "描述 UI/UX 需求",
+      "cwd": "项目目录",
+      "examples": [
+        "/ui-ux-pro-max Build a landing page for my SaaS product",
+        "/ui-ux-pro-max Create a dashboard for healthcare analytics"
+      ]
+    }
+  ],
+  "usage_notes": "UI UX Pro Max 提供智能设计系统生成和 UI/UX 实现。\n\n**工作流程**：\n1. 描述需求 - 请求任何 UI/UX 任务\n2. 自动生成设计系统 - AI 使用推理引擎生成完整设计系统\n3. 智能推荐 - 根据产品类型和需求匹配最佳样式、颜色、字体\n4. 代码生成 - 实现 UI 并遵循最佳实践\n5. 交付前检查 - 验证常见 UI/UX 反模式\n\n**支持的技术栈**：\n- Web: HTML+Tailwind, React, Next.js, Vue, Nuxt.js, Svelte, Astro, shadcn/ui, Nuxt UI\n- iOS: SwiftUI\n- Android: Jetpack Compose\n- 跨平台: React Native, Flutter\n\n**触发方式**：\n- Claude/Windsurf/Antigravity 等：自动激活（Skill Mode）\n- Cursor/Kiro/Copilot/Roo Code：使用 /ui-ux-pro-max 命令",
+  "conflicts": null
+}

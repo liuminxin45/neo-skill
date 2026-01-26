@@ -8,8 +8,24 @@
   "commit-message": [
     "gh:aider-chat/aider#git-commit"
   ],
+  "component-library": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
   "context-aware": [
     "gh:aider-chat/aider#code-edit"
+  ],
+  "design-guidelines": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "design-system": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "design-tokens": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "frontend": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
   ],
   "git-commit": [
     "gh:aider-chat/aider#git-commit"
@@ -20,7 +36,25 @@
   "git-workflow": [
     "gh:aider-chat/aider#git-commit"
   ],
+  "mobile-design": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
   "multi-file-editing": [
     "gh:aider-chat/aider#code-edit"
+  ],
+  "responsive-design": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "style-guide": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "ui-design": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "ux-design": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "web-design": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
   ]
 }

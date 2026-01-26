@@ -1,4 +1,6 @@
 [
   "gh:aider-chat/aider#code-edit",
-  "gh:aider-chat/aider#git-commit"
+  "gh:aider-chat/aider#git-commit",
+  "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+  "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
 ]

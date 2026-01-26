@@ -1,0 +1,38 @@
+{
+  "unit_id": "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system",
+  "package_id": "gh:nextlevelbuilder/ui-ux-pro-max-skill",
+  "name": "UI UX Pro Max - Design System Generator",
+  "description": "Intelligent design system generation with 100 industry-specific reasoning rules. Automatically generates complete design systems including colors, typography, spacing, and component guidelines based on product type and requirements.",
+  "capability_tags": [
+    "design-system",
+    "design-tokens",
+    "style-guide",
+    "component-library",
+    "design-guidelines"
+  ],
+  "keywords": [
+    "design system",
+    "design tokens",
+    "style guide",
+    "color palette",
+    "typography",
+    "spacing",
+    "components",
+    "ui library"
+  ],
+  "ide_support": ["claude", "windsurf", "cursor", "antigravity", "copilot", "kiro", "codex", "qoder", "roocode", "gemini", "trae", "opencode", "continue", "codebuddy", "generic"],
+  "entrypoints": [
+    {
+      "command": "/design-system",
+      "args": "[product-type] [requirements]",
+      "cwd": "项目目录",
+      "examples": [
+        "/design-system Generate a design system for a SaaS dashboard",
+        "/design-system Create design tokens for a healthcare app",
+        "/design-system Build a style guide for an e-commerce platform"
+      ]
+    }
+  ],
+  "usage_notes": "设计系统生成器使用 100 条行业特定推理规则自动生成完整的设计系统。\n\n**功能特性**：\n- 67 种 UI 样式（Glassmorphism, Claymorphism, Minimalism, Brutalism, Neumorphism, Bento Grid, Dark Mode, AI-Native UI 等）\n- 96 种行业特定色板（SaaS, E-commerce, Healthcare, Fintech, Beauty 等）\n- 57 种字体配对（包含 Google Fonts 导入）\n- 25 种图表类型推荐（用于仪表板和分析）\n- 99 条 UX 指南（最佳实践、反模式、无障碍规则）\n\n**设计系统持久化**（Master + Overrides 模式）：\n生成的设计系统可以保存并在项目中复用，支持覆盖特定组件的样式。\n\n**智能推荐**：\n根据产品类型（SaaS/电商/医疗/金融等）和需求自动匹配最佳设计方案。",
+  "conflicts": null
+}

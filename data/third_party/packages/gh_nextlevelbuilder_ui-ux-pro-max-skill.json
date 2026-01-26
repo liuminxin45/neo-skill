@@ -1,0 +1,28 @@
+{
+  "package_id": "gh:nextlevelbuilder/ui-ux-pro-max-skill",
+  "name": "UI UX Pro Max",
+  "description": "AI skill that provides design intelligence for building professional UI/UX across multiple platforms and frameworks. Includes 67 UI styles, 96 color palettes, 57 font pairings, and 100 reasoning rules for intelligent design system generation.",
+  "source": {
+    "type": "git",
+    "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+    "ref": "main"
+  },
+  "docs": {
+    "readme": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.md",
+    "homepage": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill"
+  },
+  "supported_ides": ["claude", "windsurf", "cursor", "antigravity", "copilot", "kiro", "codex", "qoder", "roocode", "gemini", "trae", "opencode", "continue", "codebuddy", "generic"],
+  "install": {
+    "method": "npm",
+    "auto_install_cmd": "npm install -g uipro-cli && uipro init --ai windsurf",
+    "manual_install_cmd": "npm install -g uipro-cli\nuipro init --ai <your-ai-assistant>",
+    "uninstall_cmd": "npm uninstall -g uipro-cli",
+    "notes": "需要 Node.js 16+；安装后需要在项目目录中运行 uipro init 命令指定 AI 助手类型"
+  },
+  "units": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design",
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "trust_level": "trusted",
+  "notes": "成熟开源项目，支持 13 种技术栈，包含 100 条行业特定推理规则"
+}

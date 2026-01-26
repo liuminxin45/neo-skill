@@ -12,19 +12,85 @@
   "code assistant": [
     "gh:aider-chat/aider#code-edit"
   ],
+  "color palette": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
   "commit message": [
     "gh:aider-chat/aider#git-commit"
+  ],
+  "components": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "dashboard": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "design": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "design system": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "design tokens": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
   ],
   "edit multiple files": [
     "gh:aider-chat/aider#code-edit"
   ],
+  "flutter": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
   "git commit": [
     "gh:aider-chat/aider#git-commit"
+  ],
+  "landing page": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "mobile app": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "nextjs": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
   ],
   "pair programming": [
     "gh:aider-chat/aider#code-edit"
   ],
+  "react": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
   "refactor": [
     "gh:aider-chat/aider#code-edit"
+  ],
+  "shadcn": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "spacing": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "style guide": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "swiftui": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "tailwind": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "typography": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "ui": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "ui library": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#design-system"
+  ],
+  "ux": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "vue": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
+  ],
+  "website": [
+    "gh:nextlevelbuilder/ui-ux-pro-max-skill#ui-design"
   ]
 }
