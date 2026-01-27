@@ -144,6 +144,7 @@ def _build_sync_pairs(effective_ais: List[str]) -> List[tuple]:
     pairs = [
         ("skills", "skills"),
         (".shared/skill-creator", ".shared/skill-creator"),
+        (".shared/review-gate", ".shared/review-gate"),
     ]
     for ai in effective_ais:
         rules = AI_COPY_RULES.get(ai)
