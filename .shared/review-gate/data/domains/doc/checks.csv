@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-DOC-01,Missing JSDoc for public API,RECOMMENDATION,Public function lacks documentation,Export + comment analysis,YES
+C-DOC-02,Outdated comments,RECOMMENDATION,Comments contradict code,Code analysis,NO
+C-DOC-03,Complex logic without explanation,RECOMMENDATION,Complex code lacks why comment,Complexity + comment analysis,NO

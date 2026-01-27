@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-UI-01,Detect missing key in lists,JSX analysis for .map without key,LOW,React components,.map() without key prop

@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-UI-01,Missing React.memo,RECOMMENDATION,Component re-renders unnecessarily,Performance analysis,PARTIAL
+C-UI-02,Inline function in JSX,RECOMMENDATION,Function created on every render,Code pattern,YES
+C-UI-03,Missing key prop,RECOMMENDATION,List items without key,JSX analysis,YES

@@ -1,0 +1,3 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-SEC-01,Detect dangerouslySetInnerHTML,Search for dangerouslySetInnerHTML in JSX,LOW,React components,dangerouslySetInnerHTML usage
+HG-SEC-02,Detect hardcoded secrets,Regex for API_KEY/SECRET/PASSWORD patterns,HIGH,All files,const API_KEY = 'sk_...'

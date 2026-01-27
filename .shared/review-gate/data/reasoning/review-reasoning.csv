@@ -1,0 +1,16 @@
+signal_type,condition,domains,weight,rationale
+layer_classification,file in presentation/application/domain,layer,1.0,Layer classification triggers layer boundary checks
+layer_classification,file in domain,pure,0.9,Domain layer should be pure
+layer_classification,file in application,pure,0.8,Application layer should minimize side effects
+circular_dependency,cycles detected,dep,1.0,Circular dependencies are architectural violations
+side_effect_violation,side effects in pure layer,pure,1.0,Side effects in domain/application harm testability
+complexity_issue,high complexity detected,complex,0.7,Complexity issues affect maintainability
+deep_index_files,deep index.ts files,api,0.8,Deep index files risk circular dependencies
+api_breaking_change,public API changed,api,0.9,API changes need careful review
+test_failure,tests failing,test,1.0,Test failures must be addressed
+dependency_trace,cross-layer import,layer,1.0,Cross-layer imports violate architecture
+dependency_trace,upward dependency,dep,0.9,Upward dependencies violate dependency direction
+file_change,*.ts or *.tsx,type,0.3,TypeScript files may have type issues
+file_change,components/*,ui,0.5,UI components need UX review
+file_change,**/api/**,sec,0.6,API endpoints need security review
+file_change,**/*.test.*,test,0.4,Test changes need quality review

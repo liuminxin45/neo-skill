@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-DOC-01,Require JSDoc for public exports,Check exported functions for /** */ comments,MEDIUM,Public API files,export function without JSDoc

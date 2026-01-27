@@ -1,0 +1,6 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-LAYER-01,Detect domain/* importing from presentation/*,AST analysis of import statements + path matching,LOW,TypeScript/JavaScript files,"import { X } from '@/presentation/...' in domain/*"
+HG-LAYER-02,Detect domain/* importing from infra/* (except interfaces),AST + check if imported symbol is interface/type,MEDIUM,TypeScript files,Direct imports of concrete classes from infra
+HG-LAYER-03,Detect application/* importing from presentation/*,AST analysis of import statements,LOW,TypeScript/JavaScript files,"import from presentation/* in application/*"
+HG-LAYER-04,Enforce layer directory structure,File path validation against allowed layers,LOW,All source files,Files not in presentation/application/domain/infra/shared/types/tests
+HG-LAYER-05,Detect circular dependencies between layers,Build import graph and detect cycles,LOW,All TypeScript/JavaScript files,Cycles in dependency graph

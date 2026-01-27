@@ -1,0 +1,6 @@
+id,title,severity,description,evidence_requirements,automatable
+C-PURE-01,Side effects in domain layer,BLOCKER,Domain layer contains I/O or side effects,Code pattern analysis,PARTIAL
+C-PURE-02,Side effects in application layer,RECOMMENDATION,Application layer has direct side effects,Code pattern analysis,PARTIAL
+C-PURE-03,Untestable business logic,RECOMMENDATION,Business logic tightly coupled to side effects,Code structure analysis,NO
+C-PURE-04,Missing dependency injection,RECOMMENDATION,Side effects not injected as dependencies,Code pattern analysis,NO
+C-PURE-05,Impure function in pure module,RECOMMENDATION,Function with side effects in pure context,Function analysis,PARTIAL

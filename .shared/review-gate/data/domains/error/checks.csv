@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-ERROR-01,Empty catch block,RECOMMENDATION,Error caught but not handled,Code pattern,YES
+C-ERROR-02,Generic error thrown,RECOMMENDATION,Throwing generic Error instead of custom type,Error analysis,PARTIAL
+C-ERROR-03,Missing error boundary,RECOMMENDATION,No error handling for critical path,Code flow analysis,NO

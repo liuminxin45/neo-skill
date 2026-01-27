@@ -1,0 +1,5 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-COMPLEX-01,Limit function length to 60 lines,Count lines between function declaration and closing brace,LOW,All functions,Functions with >60 lines
+HG-COMPLEX-02,Limit cyclomatic complexity to 15,Calculate decision points in function,LOW,All functions,Functions with >15 if/for/while/case
+HG-COMPLEX-03,Limit nesting depth to 4,Track indentation levels,LOW,All code,Code with >4 levels of nesting
+HG-COMPLEX-04,Flag single-letter variables,Check variable names against pattern,HIGH,All variables,Variables named a/b/c/x/y/z without context

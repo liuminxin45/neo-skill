@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-ASYNC-01,Unhandled promise rejection,RECOMMENDATION,Promise without catch or await,Code analysis,YES
+C-ASYNC-02,Race condition risk,RECOMMENDATION,Concurrent state mutations,Code flow analysis,NO
+C-ASYNC-03,Missing async/await,RECOMMENDATION,Promise chains instead of async/await,Code pattern,PARTIAL

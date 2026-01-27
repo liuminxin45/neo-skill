@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-TEST-01,Missing tests for new logic,RECOMMENDATION,New business logic lacks tests,Coverage analysis,NO
+C-TEST-02,Test quality issues,RECOMMENDATION,Tests don't verify behavior,Test analysis,NO
+C-TEST-03,Flaky test patterns,RECOMMENDATION,Tests with timing dependencies,Test pattern analysis,PARTIAL

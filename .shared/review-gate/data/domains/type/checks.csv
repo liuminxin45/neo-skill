@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-TYPE-01,Any type usage,RECOMMENDATION,Using any instead of proper types,Type analysis,YES
+C-TYPE-02,Missing type exports,RECOMMENDATION,Types not exported from public API,Export analysis,PARTIAL
+C-TYPE-03,Type assertion overuse,RECOMMENDATION,Excessive use of as/! assertions,Type analysis,YES

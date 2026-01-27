@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-TEST-01,Detect setTimeout in tests,Search for setTimeout in test files,MEDIUM,Test files,setTimeout in *.test.* files

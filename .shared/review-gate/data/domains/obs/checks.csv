@@ -1,0 +1,3 @@
+id,title,severity,description,evidence_requirements,automatable
+C-OBS-01,Console in non-boundary layer,RECOMMENDATION,Console usage outside entry/infra,Code pattern,YES
+C-OBS-02,Missing structured logging,RECOMMENDATION,Logs lack context/structure,Log analysis,NO

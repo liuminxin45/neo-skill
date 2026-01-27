@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-PERF-01,Blocking operation in main thread,RECOMMENDATION,Synchronous heavy computation,Code analysis,NO
+C-PERF-02,Resource leak,RECOMMENDATION,Unclosed connections/timers,Code pattern,PARTIAL
+C-PERF-03,Inefficient algorithm,RECOMMENDATION,O(n²) when O(n) possible,Algorithm analysis,NO

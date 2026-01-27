@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-ASYNC-01,Detect unhandled promises,AST analysis for promises without catch/await,MEDIUM,All async code,promise without .catch() or try-catch

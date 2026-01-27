@@ -1,0 +1,5 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-PURE-01,Detect fetch/axios in domain/*,Regex or AST search for network calls,LOW,domain/* files,"fetch(|axios. in domain layer"
+HG-PURE-02,Detect fs operations in domain/*,Search for fs module usage,LOW,domain/* files,require('fs') or import fs in domain
+HG-PURE-03,Detect Date.now/new Date in domain/*,Regex search for time-dependent code,MEDIUM,domain/* files,Date.now() or new Date() in domain
+HG-PURE-04,Detect Math.random in domain/*,Regex search for random number generation,MEDIUM,domain/* files,Math.random() in domain

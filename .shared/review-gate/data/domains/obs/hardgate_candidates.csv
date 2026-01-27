@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-OBS-01,Detect console in domain/application,Search for console. in restricted layers,LOW,domain/* and application/*,console.log in pure layers

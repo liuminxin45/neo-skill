@@ -1,0 +1,4 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-API-01,Detect deep index.ts files,Count path depth of index.ts files,LOW,index.ts files,src/a/b/c/index.ts (depth > 2)
+HG-API-02,Require JSDoc for public exports,Check exported symbols for JSDoc comments,MEDIUM,Public API files,export function foo() without /** */
+HG-API-03,Detect default export outside pages/,Check for default exports in non-framework files,LOW,Non-page TypeScript files,export default in non-page files

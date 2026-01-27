@@ -1,0 +1,4 @@
+id,title,severity,description,evidence_requirements,automatable
+C-SEC-01,XSS risk with dangerouslySetInnerHTML,BLOCKER,Unsafe HTML rendering,Code pattern,YES
+C-SEC-02,Missing input validation,RECOMMENDATION,User input not validated,Code analysis,NO
+C-SEC-03,Hardcoded secrets,BLOCKER,API keys/passwords in code,Pattern matching,YES

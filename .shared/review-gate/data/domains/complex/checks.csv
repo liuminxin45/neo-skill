@@ -1,0 +1,6 @@
+id,title,severity,description,evidence_requirements,automatable
+C-COMPLEX-01,Excessive nesting depth,RECOMMENDATION,Code has >4 levels of nesting,Indentation analysis,YES
+C-COMPLEX-02,Long function,RECOMMENDATION,Function exceeds 60 lines,Line count,YES
+C-COMPLEX-03,God function,RECOMMENDATION,Function has too many responsibilities,Complexity metrics,PARTIAL
+C-COMPLEX-04,High cyclomatic complexity,RECOMMENDATION,Function has >15 decision points,Complexity analysis,YES
+C-COMPLEX-05,Poor variable naming,RECOMMENDATION,Variables named a/b/x/temp without context,Identifier analysis,PARTIAL

@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-ERROR-01,Detect empty catch blocks,AST analysis for catch with no statements,LOW,All try-catch blocks,catch (e) {}

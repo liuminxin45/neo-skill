@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-TYPE-01,Detect any type usage,AST analysis for any type annotations,MEDIUM,All TypeScript files,: any or as any

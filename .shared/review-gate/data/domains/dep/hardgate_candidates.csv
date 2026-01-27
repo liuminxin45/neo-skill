@@ -1,0 +1,5 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-DEP-01,Detect circular imports,Build import graph with DFS cycle detection,LOW,All TypeScript/JavaScript files,Import cycles in dependency graph
+HG-DEP-02,Limit module fan-out,Count imports per file and flag >15,MEDIUM,All source files,File with >15 import statements
+HG-DEP-03,Detect upward layer dependencies,Combine import analysis with layer classification,LOW,TypeScript files,Lower layer importing from higher layer
+HG-DEP-04,Flag direct external library usage in domain,Check domain/* files for external package imports,MEDIUM,domain/* files,"import axios/fetch/prisma in domain/*"

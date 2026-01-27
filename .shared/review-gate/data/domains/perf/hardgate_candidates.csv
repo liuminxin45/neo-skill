@@ -1,0 +1,2 @@
+rule_id,rule_idea,implementation_hint,false_positive_risk,scope,example_pattern
+HG-PERF-01,Detect missing cleanup in useEffect,Check useEffect with timers/listeners without cleanup,MEDIUM,React hooks,useEffect with setTimeout/addEventListener without cleanup

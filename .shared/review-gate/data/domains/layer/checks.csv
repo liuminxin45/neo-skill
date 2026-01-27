@@ -1,0 +1,6 @@
+id,title,severity,description,evidence_requirements,automatable
+C-LAYER-01,Layer dependency direction violation,BLOCKER,Domain/application layers import from presentation/infra,Import statements + dependency trace,PARTIAL
+C-LAYER-02,Unclear layer assignment,RECOMMENDATION,File does not fit clearly into any layer,File path + content analysis,NO
+C-LAYER-03,Mixed responsibilities in single file,RECOMMENDATION,File contains logic from multiple layers,Code structure analysis,NO
+C-LAYER-04,New directory without clear layer,RECOMMENDATION,New directory created outside standard layers,Directory structure,NO
+C-LAYER-05,Presentation logic in domain layer,BLOCKER,Domain layer contains UI/presentation concerns,Import analysis + code patterns,PARTIAL

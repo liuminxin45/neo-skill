@@ -1,0 +1,6 @@
+id,title,severity,description,evidence_requirements,automatable
+C-DEP-01,Circular dependency detected,BLOCKER,Circular import chain between modules,Dependency graph with cycle,YES
+C-DEP-02,High coupling between modules,RECOMMENDATION,Module imports too many other modules,Import count analysis,PARTIAL
+C-DEP-03,Upward dependency violation,BLOCKER,Lower layer depends on higher layer,Dependency trace + layer info,PARTIAL
+C-DEP-04,Tight coupling to external library,RECOMMENDATION,Direct usage of external library throughout codebase,Import analysis,NO
+C-DEP-05,Missing dependency abstraction,RECOMMENDATION,Concrete dependency instead of interface,Type analysis,NO

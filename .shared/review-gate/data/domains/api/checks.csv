@@ -1,0 +1,6 @@
+id,title,severity,description,evidence_requirements,automatable
+C-API-01,Deep index.ts files,RECOMMENDATION,Index files deeper than 2 levels risk circular deps,File paths,YES
+C-API-02,Default export overuse,RECOMMENDATION,Default exports used outside framework requirements,Export analysis,PARTIAL
+C-API-03,Breaking API change,BLOCKER,Public API modified without deprecation,API surface diff,PARTIAL
+C-API-04,Undocumented public API,RECOMMENDATION,Public export lacks JSDoc/TSDoc,Export + comment analysis,YES
+C-API-05,Inconsistent export pattern,RECOMMENDATION,Mix of named and default exports in same module,Export analysis,PARTIAL
