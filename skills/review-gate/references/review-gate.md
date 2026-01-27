@@ -1,228 +1,220 @@
-# Review Gate 架构与工程规范
+# Review Gate - 架构与代码反腐败审查
 
-## 目标
-- 建立架构/工程化规范，明确哪些可以自动化（转为 Hard Gate），哪些需要人工 Review
+> **定位**：架构/代码反腐败审查，区别于 lint/hard-gate。关注架构决策、模块边界、依赖方向、副作用隔离、可测试性，防止"慢慢写歪"。
+
+## 核心理念
+
+### 目标
 - 在 PR review 中显式检查架构与设计决策
 - 防止架构在长期演进中"慢慢写歪"
+- 明确哪些可以自动化（转为 Hard Gate），哪些需要人工 Review
 
-## Non-negotiable
-- Review Gate 不能替代 Hard Gate：能自动化的规则必须先自动化
-- Review 检查点必须具体、可执行，避免模糊的"代码质量"描述
-- 对于重复出现的 Review 问题，应考虑将其转化为 Hard Gate 规则
+### Non-negotiable
+- **Review Gate 不能替代 Hard Gate**：能自动化的规则必须先自动化
+- **检查点必须具体、可执行**：避免模糊的"代码质量"描述
+- **持续演进**：重复出现的 Review 问题应考虑转化为 Hard Gate 规则
 
-## 架构/工程化规范（Review Gate 为主）
+## 架构概览
 
-### 目录组织范式
-- 采用 `type-first` 分层模型
-- 默认层级：
-  - `presentation/`：UI 组件、页面、交互逻辑
-  - `application/`：用例、编排、应用服务
-  - `domain/`：业务逻辑、领域模型、业务规则
-  - `infra/`：基础设施、外部依赖适配器
-  - `shared/`：跨层共享工具、常量
-  - `types/`：公共类型定义
-  - `tests/`：测试相关
+本技能已重构为**数据驱动的 3 层架构**，参考 `ui-ux-pro-max` 的分层索引设计：
 
-**Review 检查点**：
-- 新增目录是否符合现有分层模型？
-- 是否存在职责不清的"杂项"目录？
-
-### 层内职责边界
-两条原则同时成立：
-1. **目录即职责**：一个目录应该只有一个清晰的职责
-2. **依赖反推职责**：通过依赖关系可以反推出职责边界，禁止"为了复用"而跨职责/跨层耦合
-
-**Review 检查点**：
-- 新增的模块/文件是否放在了正确的层级？
-- 是否存在为了复用而跨层导入的情况（应该向下抽取到 shared/domain）？
-- domain/application 是否回依赖了 infra/presentation？
-
-### 命名与一致性
-基本约定：
-- React components：`PascalCase.tsx`
-- hooks：`useXxx.ts`
-- utils/functions：`camelCase.ts` 或 `kebab-case.ts`（保持仓库一致）
-- 常量：`UPPER_SNAKE_CASE` 或 `camelCase`（保持仓库一致）
-- 类型/接口：`PascalCase`
-
-文件名与导出符号一致性：
-- 不强制，但建议文件名与主要导出符号一致
-- 在 Review 中统一建议，避免命名混乱
-
-**Review 检查点**：
-- 新增文件的命名是否符合仓库约定？
-- 文件名与导出符号是否一致（或有合理理由不一致）？
-- 是否存在缩写/拼写不一致的情况？
-
-### 模块 API 设计
-原则：
-- 公共 API 以包级 entrypoints（`package.json#exports`）为准
-- 允许在包根 `index.ts` 聚合导出
-- **禁止**在深层目录层层 `index.ts` 造成循环依赖与耦合扩散
-- 默认倾向 **named exports**；default export 仅在框架强约束处使用（如 Next.js 页面组件）
-
-**Review 检查点**：
-- 新增的 public API 是否通过 `exports` 字段暴露？
-- 是否在深层目录新增了 `index.ts`（可能导致循环依赖）？
-- 是否滥用 default export（应该用 named export）？
-- 导出的 API 是否有清晰的边界和文档？
-
-### 副作用隔离（可测试性）
-核心原则：
-- **domain/application 尽量保持纯**：不直接依赖 network/fs/db/time/random
-- I/O 操作集中在 **infra/adapter**，通过抽象或依赖注入传入
-- 副作用边界清晰，便于测试和替换实现
-
-**Review 检查点**：
-- domain/application 层是否直接调用了 `fetch`/`axios`/`fs`/`Date.now()`/`Math.random()` 等副作用？
-- 是否通过接口/依赖注入的方式隔离了副作用？
-- 关键业务逻辑是否可以在不依赖外部资源的情况下测试？
-
-### 依赖方向与抽象层次
-依赖方向（从上到下）：
 ```
-presentation -> application -> domain <- infra
-                                  ^
-                                  |
-                              shared/types
+.shared/review-gate/
+├── data/                    # 数据层：结构化知识库
+│   ├── domains/            # 14 个领域分类
+│   │   ├── layer/         # 分层架构
+│   │   ├── dep/           # 依赖管理
+│   │   ├── api/           # API 设计
+│   │   ├── pure/          # 副作用隔离
+│   │   ├── complex/       # 复杂度控制
+│   │   ├── error/         # 错误处理
+│   │   ├── obs/           # 可观测性
+│   │   ├── type/          # 类型系统
+│   │   ├── async/         # 异步处理
+│   │   ├── ui/            # UI 优化
+│   │   ├── perf/          # 性能优化
+│   │   ├── sec/           # 安全检查
+│   │   ├── doc/           # 文档规范
+│   │   └── test/          # 测试策略
+│   ├── reasoning/         # 推理层：信号到检查的路由规则
+│   └── templates/         # 输出模板
+├── scripts/                # 运行时层：信号分析器 + 引擎
+│   ├── signals/           # 7 个信号分析器
+│   └── engine/            # 路由、评分、组合、持久化
+└── review-system/         # 分层覆盖配置
+    ├── MASTER.md          # 全局默认
+    ├── stacks/            # 技术栈级别
+    ├── packages/          # 包级别
+    └── paths/             # 路径级别（最高优先级）
 ```
 
-原则：
-- **依赖向下/向内**：presentation 可以依赖 application，application 可以依赖 domain，但反向不行
-- **infra 依赖 domain 的抽象**：infra 实现 domain 定义的接口/抽象
-- **禁止跨层耦合**：不允许为了"方便"而打破依赖方向
+详细架构说明见：[`.shared/review-gate/README.md`](../../../.shared/review-gate/README.md)
 
-**Review 检查点**：
-- 新增依赖是否符合依赖方向？
-- 是否存在跨层的强耦合（应该抽象接口）？
-- 是否存在循环依赖的风险？
+## 领域知识索引
 
-### 复杂度与可读性
-虽然有 Hard Gate 限制（单函数 60 行、圈复杂度 15），但 Review 还需关注：
-- **认知复杂度**：代码是否易于理解？
-- **嵌套层级**：是否过度嵌套（建议早返回）？
-- **函数职责**：是否一个函数做了太多事情？
-- **抽象层次一致性**：同一个函数内是否混合了高层业务逻辑和底层实现细节？
+每个领域包含 4 个标准文件：
 
-**Review 检查点**：
-- 复杂的业务逻辑是否拆分成了多个小函数？
-- 是否存在"上帝函数"（做了太多事情）？
-- 变量/函数命名是否清晰表达了意图？
+| 领域 | 关注点 | 检查规则 | 修复方案 | 反模式 | 硬门候选 |
+|------|--------|----------|----------|--------|----------|
+| **layer** | 分层架构 | [checks.csv](../../../.shared/review-gate/data/domains/layer/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/layer/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/layer/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/layer/hardgate_candidates.csv) |
+| **dep** | 依赖管理 | [checks.csv](../../../.shared/review-gate/data/domains/dep/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/dep/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/dep/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/dep/hardgate_candidates.csv) |
+| **api** | API 设计 | [checks.csv](../../../.shared/review-gate/data/domains/api/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/api/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/api/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/api/hardgate_candidates.csv) |
+| **pure** | 副作用隔离 | [checks.csv](../../../.shared/review-gate/data/domains/pure/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/pure/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/pure/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/pure/hardgate_candidates.csv) |
+| **complex** | 复杂度控制 | [checks.csv](../../../.shared/review-gate/data/domains/complex/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/complex/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/complex/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/complex/hardgate_candidates.csv) |
+| **error** | 错误处理 | [checks.csv](../../../.shared/review-gate/data/domains/error/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/error/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/error/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/error/hardgate_candidates.csv) |
+| **obs** | 可观测性 | [checks.csv](../../../.shared/review-gate/data/domains/obs/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/obs/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/obs/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/obs/hardgate_candidates.csv) |
+| **type** | 类型系统 | [checks.csv](../../../.shared/review-gate/data/domains/type/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/type/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/type/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/type/hardgate_candidates.csv) |
+| **async** | 异步处理 | [checks.csv](../../../.shared/review-gate/data/domains/async/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/async/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/async/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/async/hardgate_candidates.csv) |
+| **ui** | UI 优化 | [checks.csv](../../../.shared/review-gate/data/domains/ui/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/ui/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/ui/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/ui/hardgate_candidates.csv) |
+| **perf** | 性能优化 | [checks.csv](../../../.shared/review-gate/data/domains/perf/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/perf/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/perf/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/perf/hardgate_candidates.csv) |
+| **sec** | 安全检查 | [checks.csv](../../../.shared/review-gate/data/domains/sec/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/sec/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/sec/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/sec/hardgate_candidates.csv) |
+| **doc** | 文档规范 | [checks.csv](../../../.shared/review-gate/data/domains/doc/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/doc/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/doc/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/doc/hardgate_candidates.csv) |
+| **test** | 测试策略 | [checks.csv](../../../.shared/review-gate/data/domains/test/checks.csv) | [recipes.md](../../../.shared/review-gate/data/domains/test/recipes.md) | [anti_patterns.md](../../../.shared/review-gate/data/domains/test/anti_patterns.md) | [hardgate_candidates.csv](../../../.shared/review-gate/data/domains/test/hardgate_candidates.csv) |
 
-### 错误处理策略
-Hard Gate 已限制：
-- 统一错误类型（如 `AppError`/`DomainError`）
-- 禁止在非边界层随意 `throw new Error`
+### MVP 领域（完整实现）
+- **layer**：分层架构、依赖方向、跨层耦合
+- **dep**：循环依赖、模块耦合、依赖图分析
+- **api**：API 边界、导出设计、破坏性变更
+- **pure**：副作用隔离、可测试性、依赖注入
+- **complex**：复杂度、嵌套、函数长度、认知负担
 
-Review 需额外关注：
-- **错误边界**：错误是否在合适的边界被捕获和处理？
-- **错误信息质量**：错误信息是否足够帮助定位问题？
-- **优雅降级**：关键路径是否有合理的错误处理和降级策略？
-- **错误传播**：错误是否以合理的方式向上传播（而不是被吞掉）？
+### 其他领域（可插拔存根）
+其他 9 个领域提供了基础结构和示例规则，可根据项目需要逐步完善。
 
-**Review 检查点**：
-- 新增的错误处理是否遵循了统一的错误类型？
-- 是否存在空 catch 块（吞掉错误）？
-- 错误信息是否包含足够的上下文？
+## 使用方式
 
-### 日志与可观测性
-Hard Gate 已限制：
-- 禁止在非边界层直接 `console.*`（仅允许 entry/infra）
+### 基本命令
 
-Review 需额外关注：
-- **日志级别**：是否使用了合适的日志级别（debug/info/warn/error）？
-- **关键路径日志**：关键业务流程是否有足够的日志便于追踪？
-- **敏感信息**：日志中是否包含了敏感信息（token/密码/个人信息）？
-- **结构化日志**：是否使用结构化日志便于查询和分析？
+```bash
+# 基础审查（当前分支 vs main）
+python .shared/review-gate/scripts/review.py
 
-**Review 检查点**：
-- 新增日志是否在合适的层级（entry/infra）？
-- 日志是否包含足够的上下文信息？
-- 是否泄露了敏感信息？
+# 指定技术栈
+python .shared/review-gate/scripts/review.py --stack react
 
-### 注释与文档
-Hard Gate 已限制：
-- 禁止"解释代码做什么"的注释
-- public API 需要 TSDoc/JSDoc
+# 指定领域
+python .shared/review-gate/scripts/review.py --domain layer,dep
 
-Review 需额外关注：
-- **关键算法/复杂业务**：是否有块注释或链接到设计文档/issue？
-- **非显而易见的决策**：是否解释了"为什么这样做"而不是"做了什么"？
-- **坑/约束/假设**：是否记录了重要的假设、约束或已知问题？
-- **API 文档完整性**：public API 的文档是否包含了参数说明、返回值、示例、错误情况？
+# 确保测试通过
+python .shared/review-gate/scripts/review.py --ensure-tests-pass
 
-**Review 检查点**：
-- 复杂业务逻辑是否有注释说明"为什么"？
-- public API 的文档是否完整？
-- 是否存在需要删除的过时注释？
+# 持久化覆盖规则
+python .shared/review-gate/scripts/review.py --persist path --domain layer
+```
 
-### 测试策略
-虽然 Hard Gate 会跑测试，但 Review 需关注：
-- **测试覆盖率**：关键业务逻辑是否有单元测试？
-- **测试质量**：测试是否真正验证了业务逻辑，还是只是为了覆盖率？
-- **测试可维护性**：测试是否易于理解和维护？
-- **集成测试边界**：集成测试是否覆盖了关键路径？
+### 工作流
 
-**Review 检查点**：
-- 新增的业务逻辑是否有对应的测试？
-- 测试是否覆盖了边界情况和错误路径？
-- 测试是否依赖了不必要的外部资源（应该 mock）？
+1. **创建审查分支** → `review-gate/<timestamp>`
+2. **可选：运行测试** → 确保基线通过
+3. **收集信号**：
+   - Diff 变更集
+   - 依赖子图
+   - 层级分类
+   - API 表面变更
+   - 副作用扫描
+   - 复杂度扫描
+4. **路由与评分**：
+   - 根据推理规则路由到检查项
+   - 应用分层覆盖（paths > packages > stacks > MASTER）
+   - 评分并排序
+5. **生成报告**：
+   - Markdown 报告（按领域分组）
+   - JSON 结构化输出
+6. **可选：最小化修复** → 自动应用简单修复
+7. **可选：重新测试** → 验证修复未破坏功能
 
-### 性能考虑
-Review 需关注明显的性能问题：
-- **明显的性能反模式**：循环中的重复计算、不必要的深拷贝、大数据结构的同步遍历
-- **资源泄漏**：未清理的定时器、未关闭的连接、未取消的订阅
-- **不必要的重渲染**：React 组件是否有不必要的重渲染（缺少 memo/useMemo/useCallback）
-- **阻塞操作**：是否在主线程执行了耗时的同步操作
+详细工作流见：[`.shared/review-gate/README.md#workflow`](../../../.shared/review-gate/README.md#workflow)
 
-**Review 检查点**：
-- 是否存在明显的性能问题？
-- 是否有资源泄漏的风险？
-- 大数据处理是否考虑了性能优化？
+## 分层覆盖系统
 
-### 安全考虑
-虽然 Hard Gate 已覆盖部分安全检查，Review 需额外关注：
-- **XSS 风险**：用户输入是否被正确转义？是否使用了 `dangerouslySetInnerHTML`？
-- **SQL/NoSQL 注入**：数据库查询是否使用了参数化查询？
-- **权限检查**：关键操作是否有权限校验？
-- **数据验证**：外部输入是否经过验证？
+支持 4 级覆盖配置，优先级从高到低：
 
-**Review 检查点**：
-- 用户输入是否经过验证和转义？
-- 是否存在明显的安全风险？
-- 敏感操作是否有权限校验？
+1. **paths** → `review-system/paths/<path-hash>.md`（最高优先级）
+2. **packages** → `review-system/packages/<pkg-name>.md`
+3. **stacks** → `review-system/stacks/<stack>.md`
+4. **MASTER** → `review-system/MASTER.md`（全局默认）
 
-## Review Checklist 模板
+覆盖配置格式：
+```markdown
+# Override: <scope>
 
-### 架构层面
-- [ ] 新增代码是否放在了正确的分层？
-- [ ] 是否遵循了依赖方向（向下/向内）？
-- [ ] 是否存在跨层耦合或循环依赖？
-- [ ] 职责划分是否清晰？
+## Enabled Domains
+- layer
+- dep
 
-### 设计层面
-- [ ] 模块 API 设计是否合理（边界清晰、易用）？
-- [ ] 是否有合理的抽象（不过度设计，也不欠设计）？
-- [ ] 副作用是否被正确隔离？
-- [ ] 关键业务逻辑是否可测试？
+## Disabled Checks
+- layer-001  # 理由：特殊架构需求
+- dep-002    # 理由：遗留代码豁免
 
-### 代码质量
-- [ ] 命名是否清晰表达意图？
-- [ ] 复杂度是否合理（认知复杂度、嵌套层级）？
-- [ ] 错误处理是否完善？
-- [ ] 日志是否合理（层级、内容、敏感信息）？
+## Custom Weights
+- api-001: 0.8  # 降低优先级
+- pure-001: 1.5 # 提高优先级
+```
 
-### 文档与可维护性
-- [ ] 复杂业务逻辑是否有注释说明"为什么"？
-- [ ] public API 是否有完整文档？
-- [ ] 是否有足够的测试覆盖关键路径？
+## 输出格式
 
-### 性能与安全
-- [ ] 是否存在明显的性能问题或资源泄漏？
-- [ ] 用户输入是否经过验证？
-- [ ] 是否存在明显的安全风险？
+### Markdown 报告
+```markdown
+# Review Gate Report
+
+## Summary
+- Total Findings: 12
+- Critical: 2
+- High: 5
+- Medium: 3
+- Low: 2
+
+## Findings by Domain
+
+### layer (5 findings)
+#### [CRITICAL] layer-001: Upward dependency detected
+...
+```
+
+### JSON 输出
+```json
+{
+  "summary": {...},
+  "findings": [
+    {
+      "id": "finding-001",
+      "domain": "layer",
+      "check_id": "layer-001",
+      "severity": "critical",
+      "confidence": 0.95,
+      "evidence": {...}
+    }
+  ]
+}
+```
+
+## 与 skill-creator 的一致性
+
+本技能遵循 `skill-creator` 约定：
+
+- **目录结构**：`skills/review-gate/` 存放 canonical 定义，`.shared/review-gate/` 存放共享资源
+- **数据驱动**：使用 CSV/JSON 结构化数据，支持搜索和校验
+- **确定性脚本**：Python 脚本实现确定性工作流
+- **分层索引**：3 层架构（数据/推理/运行时）
+- **可扩展性**：领域可插拔，规则可覆盖
 
 ## 与 Hard Gate 的协同
-- **优先自动化**：如果某个 Review 检查点可以自动化，应该转化为 Hard Gate 规则
-- **持续演进**：定期回顾 Review 中重复出现的问题，考虑将其自动化
-- **互为补充**：Hard Gate 保证基线，Review Gate 关注设计和架构决策
+
+- **优先自动化**：可自动化的检查应转化为 Hard Gate 规则
+- **持续演进**：定期回顾重复问题，考虑自动化
+- **互为补充**：Hard Gate 保证基线，Review Gate 关注架构决策
+
+## 快速参考
+
+| 需求 | 查看 |
+|------|------|
+| 完整架构说明 | [`.shared/review-gate/README.md`](../../../.shared/review-gate/README.md) |
+| 领域检查规则 | [`.shared/review-gate/data/domains/*/checks.csv`](../../../.shared/review-gate/data/domains/) |
+| 修复方案 | [`.shared/review-gate/data/domains/*/recipes.md`](../../../.shared/review-gate/data/domains/) |
+| 推理规则 | [`.shared/review-gate/data/reasoning/review-reasoning.csv`](../../../.shared/review-gate/data/reasoning/review-reasoning.csv) |
+| 覆盖配置 | [`.shared/review-gate/review-system/`](../../../.shared/review-gate/review-system/) |
+| CLI 入口 | [`.shared/review-gate/scripts/review.py`](../../../.shared/review-gate/scripts/review.py) |
+
+---
+
+**注**：本文档为导航索引，具体规则和实现请查看对应的数据文件和脚本。
