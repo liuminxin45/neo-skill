@@ -1,0 +1,67 @@
+# npm ignore rules
+# By default, npm ignores dot-files. We need to explicitly include .shared/
+
+# Ignore development files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+node_modules/
+.env
+.env.local
+.env.*.local
+.DS_Store
+
+# Ignore build artifacts
+/dist/
+/build/
+*.egg-info/
+/lib/
+/.turbo/
+/.nx/
+
+# Ignore generated outputs
+reports/
+coverage/
+*.log
+*.tmp
+*.temp
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore AI Assistant generated files (these are created by init scripts)
+.claude/
+.cursor/
+.windsurf/
+.github/skills/
+.agent/
+.codebuddy/
+.codex/
+.continue/
+.gemini/
+.kiro/
+.opencode/
+.qoder/
+.roo/
+.trae/
+.github/prompts/
+
+# Ignore cache
+.ruff_cache/
+.eslintcache
+.cache/
+
+# Ignore lock files
+package-lock.json
+*.tgz
+
+# IMPORTANT: Do NOT ignore .shared/ - it contains critical shared resources
+# The negation pattern below ensures .shared/ is included in the npm package
+!.shared/
