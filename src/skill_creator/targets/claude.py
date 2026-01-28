@@ -43,10 +43,10 @@ def render_claude_skill_md(spec: SkillSpec) -> str:
     body.append("## Workflow")
     body.append(f"*Mode:* `{spec.workflow_type}`")
     body.append("")
-    body.append(_render_steps(spec.steps))
+    body.append(_render_steps(spec.steps, ref_path_prefix="resources/"))
     body.append("")
 
-    body.append(_render_resources(spec))
+    body.append(_render_resources(spec, path_prefix="resources/"))
     body.append("## Output contract")
     body.append("When invoked, produce:")
     body.append("A) A proposed directory tree")

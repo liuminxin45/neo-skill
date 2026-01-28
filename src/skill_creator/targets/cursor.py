@@ -34,8 +34,25 @@ def render_cursor_command_md(spec: SkillSpec) -> str:
     lines.append("")
     for i, step in enumerate(spec.steps, start=1):
         lines.append(f"### {i}. {step.title}")
+        if step.notes:
+            notes = step.notes
+            # Expand references paths to .cursor/commands/data/<skill>/references/
+            notes = notes.replace("`references/", f"`.cursor/commands/data/{spec.name}/references/")
+            lines.append(notes)
+            lines.append("")
         if step.commands:
             lines.append("```bash")
             lines.extend(step.commands)
             lines.append("```")
+    lines.append("")
+    
+    # References section
+    if spec.references:
+        lines.append("## References")
+        lines.append("")
+        for ref in spec.references:
+            ref_path = f".cursor/commands/data/{spec.name}/{ref}"
+            lines.append(f"- `{ref_path}`")
+        lines.append("")
+    
     return "\n".join(lines)

@@ -63,8 +63,8 @@ def render_windsurf_workflow_md(spec: SkillSpec) -> str:
         
         if step.notes:
             notes = step.notes
-            # Expand references paths
-            notes = notes.replace("`references/", f"`skills/{spec.name}/references/")
+            # Expand references paths to .windsurf/workflows/data/<skill>/references/
+            notes = notes.replace("`references/", f"`.windsurf/workflows/data/{spec.name}/references/")
             lines.append(notes)
             lines.append("")
         
@@ -80,7 +80,8 @@ def render_windsurf_workflow_md(spec: SkillSpec) -> str:
         lines.append("## References")
         lines.append("")
         for ref in spec.references:
-            ref_path = f"skills/{spec.name}/{ref}"
+            # Primary path: .windsurf/workflows/data/<skill>/<ref>
+            ref_path = f".windsurf/workflows/data/{spec.name}/{ref}"
             lines.append(f"- `{ref_path}`")
         lines.append("")
 

@@ -29,10 +29,16 @@ def generate_target(repo_root: Path, spec: SkillSpec, spec_dir: Path, target: st
         ensure_dir(out_path.parent)
         out_path.write_text(render_windsurf_workflow_md(spec), encoding="utf-8")
         
-        # Windsurf workflow data (optional)
+        # Copy references, scripts, assets to .windsurf/workflows/data/<skill>/
+        windsurf_res = repo_root / ".windsurf" / "workflows" / "data" / spec.name
+        copytree(refs_dir, windsurf_res / "references")
+        copytree(scripts_dir, windsurf_res / "scripts")
+        copytree(assets_dir, windsurf_res / "assets")
+        
+        # Windsurf workflow data (optional, legacy)
         windsurf_data_src = assets_dir / "windsurf-workflow-data"
         if windsurf_data_src.exists():
-            windsurf_data_dst = repo_root / ".windsurf" / "workflows" / "data" / spec.name
+            windsurf_data_dst = windsurf_res / "windsurf-workflow-data"
             copytree(windsurf_data_src, windsurf_data_dst)
         return out_path
 
@@ -55,6 +61,12 @@ def generate_target(repo_root: Path, spec: SkillSpec, spec_dir: Path, target: st
         out_path = repo_root / ".cursor" / "commands" / f"{spec.name}.md"
         ensure_dir(out_path.parent)
         out_path.write_text(render_cursor_command_md(spec), encoding="utf-8")
+        
+        # Copy references, scripts, assets to .cursor/commands/data/<skill>/
+        cursor_res = repo_root / ".cursor" / "commands" / "data" / spec.name
+        copytree(refs_dir, cursor_res / "references")
+        copytree(scripts_dir, cursor_res / "scripts")
+        copytree(assets_dir, cursor_res / "assets")
         return out_path
 
     elif target == "github":

@@ -6,14 +6,24 @@ from typing import Any, List
 from ..spec.model import SkillSpec, WorkflowStep
 
 
-def _render_steps(steps: List[WorkflowStep]) -> str:
+def _render_steps(steps: List[WorkflowStep], ref_path_prefix: str = "") -> str:
+    """
+    Render workflow steps with optional reference path expansion.
+    
+    Args:
+        steps: List of workflow steps
+        ref_path_prefix: Prefix to expand `references/` paths to (e.g., "resources/" for Claude)
+    """
     out = []
     for i, s in enumerate(steps, start=1):
         out.append(f"### Step {i} — {s.title}")
         if s.kind:
             out.append(f"*Type:* `{s.kind}`")
         if s.notes:
-            out.append(s.notes)
+            notes = s.notes
+            if ref_path_prefix:
+                notes = notes.replace("`references/", f"`{ref_path_prefix}references/")
+            out.append(notes)
         if s.commands:
             out.append("\n```bash")
             out.extend(s.commands)
@@ -21,22 +31,32 @@ def _render_steps(steps: List[WorkflowStep]) -> str:
     return "\n".join(out)
 
 
-def _render_resources(spec: SkillSpec) -> str:
+def _render_resources(spec: SkillSpec, path_prefix: str = "") -> str:
+    """
+    Render resources section with optional path prefix.
+    
+    Args:
+        spec: SkillSpec object
+        path_prefix: Prefix to prepend to resource paths (e.g., "resources/" for Claude)
+    """
     lines = []
     if spec.references:
         lines.append("## References (loaded on-demand)")
         for p in spec.references:
-            lines.append(f"- `{p}`")
+            full_path = f"{path_prefix}{p}" if path_prefix else p
+            lines.append(f"- `{full_path}`")
         lines.append("")
     if spec.scripts:
         lines.append("## Scripts (deterministic tools)")
         for p in spec.scripts:
-            lines.append(f"- `{p}`")
+            full_path = f"{path_prefix}{p}" if path_prefix else p
+            lines.append(f"- `{full_path}`")
         lines.append("")
     if spec.assets:
         lines.append("## Assets")
         for p in spec.assets:
-            lines.append(f"- `{p}`")
+            full_path = f"{path_prefix}{p}" if path_prefix else p
+            lines.append(f"- `{full_path}`")
         lines.append("")
     return "\n".join(lines)
 
