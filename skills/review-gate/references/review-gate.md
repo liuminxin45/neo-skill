@@ -6,6 +6,7 @@
 
 ### 目标
 - 在 PR review 中显式检查架构与设计决策
+- 在可安全自动化的场景下，基于 findings 直接执行结构性代码修复（review + fix）
 - 防止架构在长期演进中"慢慢写歪"
 - 明确哪些可以自动化（转为 Hard Gate），哪些需要人工 Review
 
@@ -16,7 +17,7 @@
 
 ## 架构概览
 
-本技能已重构为**数据驱动的 3 层架构**，参考 `ui-ux-pro-max` 的分层索引设计：
+本技能为**数据驱动的 3 层架构**的分层索引设计：
 
 ```
 .shared/review-gate/
@@ -120,7 +121,7 @@ python .shared/review-gate/scripts/review.py --persist path --domain layer
 5. **生成报告**：
    - Markdown 报告（按领域分组）
    - JSON 结构化输出
-6. **自动修复 BLOCKER** → 应用可自动化的修复
+6. **自动修复 findings** → 在可安全自动化的场景下应用结构性修复
 7. **提交修复** → 自动提交到审查分支
 
 详细工作流见：[`.shared/review-gate/README.md#workflow`](../../../.shared/review-gate/README.md#workflow)
