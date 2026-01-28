@@ -69,15 +69,15 @@ python3 .shared/review-gate/scripts/review.py --persist path --path src/domain/u
 
 ## Workflow
 
-1. Creates branch: `review-gate/<YYYYMMDD>-<topic>-<ref>`
+1. Creates branch: `review-gate/<YYYYMMDD-HHMMSS>-<ref>`
 2. (Optional) Runs existing tests baseline
-3. Extracts PR diff changeset
+3. Extracts PR diff changeset (only changed files, no full repo scan)
 4. Builds impacted dependency subgraph
-5. Generates signals (layer/dep/api/pure/complex/etc.)
+5. Generates signals from diff (layer/dep/api/pure/complex/etc.)
 6. Router selects & prioritizes checks
 7. Composer generates findings + report
-8. (Optional) Applies minimal fixes for blockers
-9. (Optional) Reruns tests to ensure green
+8. **Applies auto-fixes for BLOCKER findings**
+9. **Commits fixes to the review branch**
 10. Outputs final report (Markdown + JSON)
 
 ## Domain Reference
@@ -228,10 +228,25 @@ python3 .shared/review-gate/scripts/review.py \
    - Scope: TypeScript/JavaScript imports
 ```
 
+## Auto-Fix Capabilities
+
+The skill now automatically fixes BLOCKER findings when possible:
+
+- **Layer violations**: Adds TODO comments for manual refactoring
+- **Side effect violations**: Adds TODO comments for isolation
+- **API issues**: Requires manual review
+- **Circular dependencies**: Requires manual refactoring
+
+All fixes are:
+- Applied to the review branch
+- Automatically committed with descriptive messages
+- Traceable through git history
+
 ## Notes
 
 - **NOT a linter**: Focus is architecture, not style
 - **Evidence-required**: All findings must have concrete proof
 - **Minimal changes**: Code modifications are scoped and traceable
-- **No new tests**: Only fixes to make existing tests pass
+- **No full repo scan**: Only analyzes files in git diff
+- **Auto-commit**: Fixes are automatically committed to review branch
 - **Deterministic**: Same input always produces same output

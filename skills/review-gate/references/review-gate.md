@@ -104,12 +104,12 @@ python .shared/review-gate/scripts/review.py --persist path --domain layer
 
 ### 工作流
 
-1. **创建审查分支** → `review-gate/<timestamp>`
+1. **创建审查分支** → `review-gate/<YYYYMMDD-HHMMSS>-<ref>`
 2. **可选：运行测试** → 确保基线通过
-3. **收集信号**：
-   - Diff 变更集
+3. **收集信号**（仅从 git diff）：
+   - Diff 变更集（仅变更文件，不扫描整个仓库）
    - 依赖子图
-   - 层级分类
+   - 层级分类（基于路径，不读取文件内容）
    - API 表面变更
    - 副作用扫描
    - 复杂度扫描
@@ -120,8 +120,8 @@ python .shared/review-gate/scripts/review.py --persist path --domain layer
 5. **生成报告**：
    - Markdown 报告（按领域分组）
    - JSON 结构化输出
-6. **可选：最小化修复** → 自动应用简单修复
-7. **可选：重新测试** → 验证修复未破坏功能
+6. **自动修复 BLOCKER** → 应用可自动化的修复
+7. **提交修复** → 自动提交到审查分支
 
 详细工作流见：[`.shared/review-gate/README.md#workflow`](../../../.shared/review-gate/README.md#workflow)
 

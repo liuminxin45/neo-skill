@@ -37,50 +37,64 @@ class GraphBuilder:
     
     def build_impacted_subgraph(self, changed_files: List[str]) -> DependencyGraph:
         """Build subgraph of modules impacted by changed files."""
-        all_nodes = self._scan_all_modules()
-        
+        nodes = self._scan_module_closure(changed_files)
+
         # Mark changed files
         for file_path in changed_files:
             normalized = self._normalize_path(file_path)
-            if normalized in all_nodes:
-                all_nodes[normalized].is_changed = True
-        
-        # Find impacted nodes (transitive closure)
-        impacted = self._find_impacted_nodes(all_nodes, changed_files)
-        
-        # Detect cycles
-        cycles = self._detect_cycles(all_nodes)
-        
+            if normalized in nodes:
+                nodes[normalized].is_changed = True
+
+        # Detect cycles within the scanned subgraph
+        cycles = self._detect_cycles(nodes)
+
+        impacted = set(nodes.keys())
         return DependencyGraph(
-            nodes=all_nodes,
+            nodes=nodes,
             cycles=cycles,
             impacted_nodes=impacted,
         )
     
-    def _scan_all_modules(self) -> Dict[str, DependencyNode]:
-        """Scan all TypeScript/JavaScript modules."""
-        nodes = {}
-        
-        if not self.src_path.exists():
-            return nodes
-        
-        for ext in ["*.ts", "*.tsx", "*.js", "*.jsx"]:
-            for file_path in self.src_path.rglob(ext):
-                if "node_modules" in file_path.parts or ".test." in file_path.name:
-                    continue
-                
-                normalized = self._normalize_path(str(file_path.relative_to(self.repo_path)))
-                imports = self._extract_imports(file_path)
-                
-                node = DependencyNode(path=normalized, imports=imports)
-                nodes[normalized] = node
-        
-        # Build reverse edges
+    def _scan_module_closure(self, entry_files: List[str]) -> Dict[str, DependencyNode]:
+        """Scan only the changed files and their transitive local imports.
+
+        This intentionally avoids scanning the whole repository.
+        """
+        nodes: Dict[str, DependencyNode] = {}
+        queue: List[str] = []
+        visited: Set[str] = set()
+
+        for file_path in entry_files:
+            normalized = self._normalize_path(file_path)
+            queue.append(normalized)
+
+        while queue:
+            current = queue.pop(0)
+            if current in visited:
+                continue
+            visited.add(current)
+
+            full_path = self.repo_path / current
+            if not full_path.exists():
+                continue
+            if "node_modules" in full_path.parts or ".test." in full_path.name:
+                continue
+
+            imports = self._extract_imports(full_path)
+            node = nodes.get(current) or DependencyNode(path=current)
+            node.imports = imports
+            nodes[current] = node
+
+            for imp in imports:
+                if imp not in visited:
+                    queue.append(imp)
+
+        # Build reverse edges for scanned nodes only
         for node in nodes.values():
             for imp in node.imports:
                 if imp in nodes:
                     nodes[imp].imported_by.append(node.path)
-        
+
         return nodes
     
     def _extract_imports(self, file_path: Path) -> List[str]:
@@ -94,6 +108,19 @@ class GraphBuilder:
         
         # Match ES6 imports: import ... from "..."
         for match in re.finditer(r'import\s+.*?\s+from\s+["\']([^"\']+)["\']', content):
+            stmt = match.group(0)
+
+            # Ignore type-only imports (TypeScript): they don't create runtime deps.
+            if re.match(r"^\s*import\s+type\b", stmt):
+                continue
+
+            # Ignore `import { type A, type B } from ...` when *all* specifiers are type-only.
+            if "{" in stmt and "}" in stmt:
+                inner = stmt.split("{", 1)[1].split("}", 1)[0]
+                parts = [p.strip() for p in inner.split(",") if p.strip()]
+                if parts and all(p.startswith("type ") or p.startswith("type\t") for p in parts):
+                    continue
+
             import_path = match.group(1)
             resolved = self._resolve_import(file_path, import_path)
             if resolved:
@@ -143,27 +170,12 @@ class GraphBuilder:
         return path.replace("\\", "/")
     
     def _find_impacted_nodes(self, nodes: Dict[str, DependencyNode], changed_files: List[str]) -> Set[str]:
-        """Find all nodes impacted by changed files (BFS)."""
-        impacted = set()
-        queue = []
-        
+        """Deprecated: kept for backward compatibility."""
+        impacted: Set[str] = set()
         for file_path in changed_files:
             normalized = self._normalize_path(file_path)
             if normalized in nodes:
-                queue.append(normalized)
                 impacted.add(normalized)
-        
-        while queue:
-            current = queue.pop(0)
-            node = nodes.get(current)
-            if not node:
-                continue
-            
-            for dependent in node.imported_by:
-                if dependent not in impacted:
-                    impacted.add(dependent)
-                    queue.append(dependent)
-        
         return impacted
     
     def _detect_cycles(self, nodes: Dict[str, DependencyNode]) -> List[List[str]]:

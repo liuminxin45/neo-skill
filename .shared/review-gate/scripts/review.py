@@ -39,11 +39,12 @@ from signals import (
 from engine import Router, Scorer, Composer, PersistManager
 from engine.scorer import Finding
 from engine.router import Signal
+from engine.auto_fixer import AutoFixer
 
 
 def create_review_branch(base_branch: str, repo_path: Path) -> str:
     """Create review-gate branch."""
-    date_str = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     
     try:
         result = subprocess.run(
@@ -57,19 +58,32 @@ def create_review_branch(base_branch: str, repo_path: Path) -> str:
     except subprocess.CalledProcessError:
         ref = "unknown"
     
-    branch_name = f"review-gate/{date_str}-review-{ref}"
+    branch_name = f"review-gate/{timestamp}-{ref}"
     
     try:
         subprocess.run(
             ["git", "checkout", "-b", branch_name],
             cwd=repo_path,
             check=True,
+            capture_output=True,
         )
         print(f"✓ Created branch: {branch_name}")
-    except subprocess.CalledProcessError:
-        print(f"⚠ Could not create branch, continuing on current branch", file=sys.stderr)
-    
-    return branch_name
+        return branch_name
+    except subprocess.CalledProcessError as e:
+        print(f"⚠ Could not create branch: {e}", file=sys.stderr)
+        print("⚠ Continuing on current branch", file=sys.stderr)
+        # Get current branch name
+        try:
+            result = subprocess.run(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                cwd=repo_path,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            return result.stdout.strip()
+        except subprocess.CalledProcessError:
+            return "unknown"
 
 
 def collect_signals(
@@ -234,6 +248,14 @@ def generate_findings(
         
         elif signal.type == "circular_dependency":
             finding_counter["DEP"] += 1
+            cycle_files = []
+            if getattr(dep_graph, "cycles", None):
+                try:
+                    first_cycle = dep_graph.cycles[0]
+                    if isinstance(first_cycle, list):
+                        cycle_files = [{"path": p, "diff_hunks": []} for p in first_cycle]
+                except Exception:
+                    cycle_files = []
             findings.append(Finding(
                 id=f"RG-DEP-{finding_counter['DEP']:03d}",
                 severity="BLOCKER",
@@ -243,7 +265,7 @@ def generate_findings(
                 status="OPEN",
                 confidence="HIGH",
                 evidence={
-                    "files": [],
+                    "files": cycle_files,
                     "dependency_trace": {
                         "cycles": signal.value["cycles"],
                     },
@@ -383,6 +405,8 @@ def main() -> None:
     print("║              REVIEW GATE - Architecture Review                ║")
     print("╚════════════════════════════════════════════════════════════════╝")
     
+    print(f"\n📋 Base branch: {args.base_branch}")
+    print("\n🌿 Creating review branch...")
     branch_name = create_review_branch(args.base_branch, repo_path)
     
     signals, changeset, dep_graph, layer_info, api_surface, test_result = collect_signals(
@@ -400,12 +424,13 @@ def main() -> None:
     findings = generate_findings(signals, changeset, dep_graph, layer_info, api_surface)
     
     scorer = Scorer()
-    findings = scorer.prioritize(findings)
-    
+    all_findings = scorer.prioritize(findings)
+
+    findings_for_fix = all_findings
     if args.domain:
-        findings = [f for f in findings if f.area.lower() == args.domain.lower()]
-    
-    findings = findings[:args.max_results]
+        findings_for_fix = [f for f in findings_for_fix if f.area.lower() == args.domain.lower()]
+
+    findings_for_report = findings_for_fix[:args.max_results]
     
     composer = Composer(DATA_DIR / "templates")
     
@@ -416,7 +441,7 @@ def main() -> None:
     }
     
     report = composer.compose_report(
-        findings,
+        findings_for_report,
         changeset_summary,
         branch_name,
         args.base_branch,
@@ -433,7 +458,7 @@ def main() -> None:
     report_file = composer.save_report(report, output_dir, format=args.format)
     print(f"\n✓ Report saved to: {report_file}")
     
-    json_report = composer.compose_report(findings, changeset_summary, branch_name, args.base_branch, format="json")
+    json_report = composer.compose_report(findings_for_report, changeset_summary, branch_name, args.base_branch, format="json")
     json_file = composer.save_report(json_report, output_dir, format="json")
     print(f"✓ JSON report saved to: {json_file}")
     
@@ -441,7 +466,42 @@ def main() -> None:
         persist_mgr = PersistManager(REVIEW_SYSTEM_DIR)
         print(f"\n📝 Persisting {args.persist} overrides...")
     
-    blockers = [f for f in findings if f.severity == "BLOCKER"]
+    blockers = [f for f in findings_for_fix if f.severity == "BLOCKER"]
+
+    print(f"\n🔧 Applying auto-fixes for {len(findings_for_fix)} finding(s)...")
+    auto_fixer = AutoFixer(repo_path)
+    fix_results = auto_fixer.apply_fixes(findings_for_fix)
+
+    successful_fixes = [r for r in fix_results if r.success]
+    failed_fixes = [r for r in fix_results if not r.success]
+
+    if successful_fixes:
+        print(f"  ✓ Applied {len(successful_fixes)} fix(es)")
+        for result in successful_fixes[:20]:
+            files_str = ", ".join(result.files_modified)
+            print(f"    - {result.finding_id}: {files_str}")
+        if len(successful_fixes) > 20:
+            print(f"    ... and {len(successful_fixes) - 20} more")
+
+        print("\n💾 Committing fixes...")
+        if auto_fixer.commit_fixes(fix_results, branch_name):
+            print(f"  ✓ Fixes committed to branch: {branch_name}")
+        else:
+            print("  ⚠ No changes to commit")
+    else:
+        print("  ℹ No auto-fixable issues found")
+
+    if failed_fixes:
+        print(f"\n  ⚠ {len(failed_fixes)} issue(s) were not auto-fixable")
+        for result in failed_fixes[:10]:
+            print(f"    - {result.finding_id}: {result.error}")
+        if len(failed_fixes) > 10:
+            print(f"    ... and {len(failed_fixes) - 10} more")
+
+    print(f"\n📌 Review branch: {branch_name}")
+    print("   Run 'git diff' to see applied fixes")
+    print(f"   Merge with: git checkout {args.base_branch} && git merge {branch_name}")
+
     if blockers:
         print(f"\n⚠️  {len(blockers)} BLOCKER(S) found - review required before merge")
         sys.exit(1)
