@@ -15,19 +15,19 @@
 通过 npx 安装到当前用户的 Codex skills 目录：
 
 ```bash
-npx neo-skill install
+npx @neo_lmx/neo-skill install
 ```
 
 查看包内技能：
 
 ```bash
-npx neo-skill list
+npx @neo_lmx/neo-skill list
 ```
 
 安装到自定义目录：
 
 ```bash
-npx neo-skill install --target <path>
+npx @neo_lmx/neo-skill install --target <path>
 ```
 
 复制单个 skill 到 Codex skills 目录：

@@ -1,5 +1,5 @@
 {
-  "name": "neo-skill",
+  "name": "@neo_lmx/neo-skill",
   "version": "0.2.0",
   "description": "My Codex skills packaged for one-command installation.",
   "license": "MIT",
