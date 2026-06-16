@@ -1,0 +1,4 @@
+interface:
+  display_name: "Neo C++ Refactor"
+  short_description: "C++ code and directory cleanup"
+  default_prompt: "Use $neo-cpp-refactor to refactor these C++ files or directories for maintainability, safety, performance, Chinese /* */ comments, and build-safe organization."

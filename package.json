@@ -1,25 +1,22 @@
 {
   "name": "neo-skill",
-  "version": "0.1.30",
-  "description": "A multi-assistant skill generator (Claude/Windsurf/Cursor/GitHub Skills) driven by a canonical SkillSpec.",
+  "version": "0.2.0",
+  "description": "My Codex skills packaged for one-command installation.",
   "license": "MIT",
   "bin": {
-    "omni-skill": "bin/omni-skill.js"
+    "neo-skill": "bin/neo-skill.js"
   },
   "files": [
     "bin/**",
-    "src/**",
-    "data/**",
     "skills/**",
-    ".shared/**",
-    ".claude/**",
-    ".windsurf/**",
-    ".cursor/**",
-    ".github/skills/**",
+    "tools/**",
     "README.md",
-    "pyproject.toml"
+    "AGENTS.md",
+    "LICENSE"
   ],
-  "scripts": {},
+  "scripts": {
+    "test": "node --check bin/neo-skill.js && node bin/neo-skill.js list && node bin/neo-skill.js install --dry-run"
+  },
   "engines": {
     "node": ">=16"
   }

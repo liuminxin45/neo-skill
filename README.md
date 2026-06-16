@@ -1,145 +1,59 @@
-# neo-skill（多 AI 助手技能生成器）
+# Neo Skills
 
-一个确定性的 **skill-creator** 仓库。
+我常用的 Codex skills。
 
-**GitHub**: https://github.com/liuminxin45/neo-skill  
-**npm**: https://www.npmjs.com/package/neo-skill
+## 技能清单
 
-## 安装
+| 技能 | 说明 |
+| --- | --- |
+| `neo-task-governance` | 解决超大型任务中 Agent 上下文丢失、执行不连续、重复犯错的问题，把任务推进拆成有边界、有记录、有验证的流程。 |
+| `neo-cpp-refactor` | 固化较好的 C++ 实践要求，用于代码重构时统一命名、注释、边界、安全性和验证标准。 |
+| `neo-mail-assistant` | 弥补个人沟通中不够谨慎、容易留下漏洞的问题，用邮件材料辅助措辞、归纳证据和判断协作边界。 |
 
-```bash
-# 通过 npm 安装（推荐）
-npm install -g neo-skill
+## 安装方式
 
-# 或通过 pip 安装
-pip install neo-skill
-```
-
-**前置依赖**：需要安装 Python 3.8+
-
-## 使用方式
-
-### 命令行工具（安装后）
+通过 npx 安装到当前用户的 Codex skills 目录：
 
 ```bash
-# 初始化技能（从 npm 包安装所有 skills）
-omni-skill init --ai windsurf
-
-# 手动安装本地创建的 skill
-omni-skill install ./skills/my-new-skill
-
-# 更新 npm 包并重新初始化
-omni-skill update
-
-# 查看帮助
-omni-skill --help
+npx neo-skill install
 ```
 
-### 直接运行 Python 模块（开发模式）
+查看包内技能：
 
 ```bash
-# 初始化技能
-python -m omni_skill.cli init --ai claude
-
-# 生成技能输出
-python -m skill_creator.cli generate skills/skill-name/skillspec.json
-
-# 验证技能
-python -m skill_creator.cli validate skills/skill-name/skillspec.json
+npx neo-skill list
 ```
 
-## 功能说明
-- 使用 canonical `skills/<skill>/skillspec.json` 作为单一真源（single source of truth）
-- 为多个 AI 助手生成入口文件：
-  - Claude: `.claude/skills/<skill>/SKILL.md` + `resources/`
-  - Windsurf: `.windsurf/workflows/<skill>.md`
-  - Cursor: `.cursor/commands/<skill>.md`
-  - GitHub / VS Code Skills: `.github/skills/<skill>/SKILL.md` + resources
-- 校验生成的 `SKILL.md` 是否符合 Claude 严格的元数据规则
-- 打包 Claude `.skill`（zip 格式，符合正确的根目录结构）
+安装到自定义目录：
 
-## 支持的 Skills
-
-| Skill 名称 | 描述 | 来源 |
-|-----------|------|------|
-| **skill-creator** | 对话式收集需求，生成可在多 AI Assistant 运行的技能包 | 内置 |
-| **review-gate** | 建立架构与工程化 PR Review 规范，提供可执行的 Review Checklist | 内置 |
-
-**触发示例**：
-- skill-creator: "我想做一个 skill"、"帮我生成 SKILL.md"、"把我的 prompt 工作流变成 skill"
-- review-gate: "我想建立 PR Review 架构规范检查点"、"帮我生成 PR Review Checklist 模板"、"软评审代码"
-
-## 快速开始
-
-### 典型使用场景
-
-### 使用场景
-
-**1. 初始化技能（首次使用）**
 ```bash
-# 初始化指定 AI 助手的技能文件
-omni-skill init --ai windsurf
-omni-skill init --ai claude
-omni-skill init --ai all  # 初始化所有支持的 AI 助手
+npx neo-skill install --target <path>
 ```
 
-这会：
-- 从 npm 包同步 skills/ 和 .shared/ 到当前目录
-- 为所有 skills 生成**指定 AI 助手**的输出文件
-  - `--ai windsurf` → 只生成 `.windsurf/workflows/`
-  - `--ai claude` → 只生成 `.claude/skills/`
-  - `--ai all` → 生成所有目标
-- 保存初始化状态到 .neo-skill.json
+复制单个 skill 到 Codex skills 目录：
 
-**2. 使用 skill-creator 创建新 skill**
-
-在 IDE 中输入 `/skill-creator`（Windsurf）或使用其他 AI 助手的触发方式，按照对话式流程创建新 skill。
-
-**3. 安装刚创建的 skill**
-```bash
-# 安装单个 skill
-omni-skill install ./skills/my-new-skill
-
-# 或安装整个 skills 目录
-omni-skill install ./skills
+```powershell
+Copy-Item -Recurse .\skills\neo-task-governance $env:USERPROFILE\.codex\skills\
 ```
 
-这会：
-- 复制 skill 到当前目录的 skills/ 文件夹
-- 为该 skill 生成**所有 AI 助手**的输出文件（.windsurf, .claude, .cursor, .github）
+或一次性同步全部公开 skills：
 
-**注意**：与 `init` 不同，`install` 命令总是生成所有 AI 目标的输出，以确保最大兼容性。
-
-**4. 更新 npm 包**
-```bash
-# 更新到最新版本并重新初始化
-omni-skill update
+```powershell
+.\tools\sync-to-codex-skills.ps1
 ```
 
-这会：
-- 运行 `npm install neo-skill@latest`
-- 重新执行 `omni-skill init`（使用保存的 AI 目标）
+安装后，可以在对话中按名称触发：
 
-**在其他项目中使用**
-将 neo-skill 仓库克隆到你的项目中（例如 `vendor/neo-skill/`），然后：
-1. 设置 PYTHONPATH：`export PYTHONPATH=$PWD/vendor/neo-skill/src:$PYTHONPATH`
-2. 运行命令：`omni-skill init --ai claude`
+```text
+$neo-task-governance 帮我治理这个迁移任务
+$neo-cpp-refactor 重构这些 C++ 文件
+$neo-mail-assistant 把这些邮件材料整理成任务记录
+```
 
-**支持的 AI 助手：**
-claude, cursor, windsurf, antigravity, copilot, kiro, codex, qoder, roocode, gemini, trae, opencode, continue, all
+## 维护
 
+发布前运行校验：
 
-## Canonical 与生成文件
-
-### Canonical（可编辑）
-- `skills/<skill>/skillspec.json`
-- `skills/<skill>/references/**`
-- `skills/<skill>/scripts/**`（可选）
-- `skills/<skill>/assets/**`（可选）
-
-### 生成文件（不要手动编辑）
-- `.windsurf/workflows/<skill>.md`
-- `.windsurf/workflows/data/<skill>/**`（从 `skills/<skill>/assets/windsurf-workflow-data` 同步）
-- `.claude/skills/<skill>/**`
-- `.cursor/commands/<skill>.md`
-- `.github/skills/<skill>/**`
+```powershell
+.\tools\validate-skills.ps1
+```

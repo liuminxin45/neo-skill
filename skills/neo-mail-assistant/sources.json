@@ -1,0 +1,7 @@
+{
+  "method": "email-assistant skill distillation",
+  "data_pipeline": "aggregate summaries from email-like work materials; raw evidence excluded",
+  "raw_evidence_policy": "not committed",
+  "records": 12,
+  "generated_at": "2026-06-09"
+}

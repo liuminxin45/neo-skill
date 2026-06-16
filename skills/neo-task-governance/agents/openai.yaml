@@ -1,0 +1,4 @@
+interface:
+  display_name: "Neo Task Governance"
+  short_description: "Govern large, risky engineering tasks"
+  default_prompt: "Use $neo-task-governance to plan and drive this large engineering task with clear gates and closure."

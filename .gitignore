@@ -1,65 +1,12 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.venv/
-venv/
-.node_modules/
+work/
+outputs/
+.codex/
+.cache/
 node_modules/
-.env
-.env.local
-.env.*.local
-.DS_Store
-
-# build/dist
-/dist/
-/build/
-*.egg-info/
-/lib/
-/.turbo/
-/.nx/
-
-# generated outputs
-reports/
-coverage/
 *.log
 *.tmp
-*.temp
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# AI Assistant generated files (created by init scripts)
-.claude/
-.cursor/
-.windsurf/
-.github/skills/
-.agent/
-.codebuddy/
-.codex/
-.continue/
-.gemini/
-.kiro/
-.opencode/
-.qoder/
-.roo/
-.trae/
-.github/prompts/
-
-# .shared/ is versioned (committed)
-
-# OS
-Thumbs.db
-
-# cache
-.ruff_cache/
-.eslintcache
-.cache/
-
-# lock files (npm package project)
-package-lock.json
 *.tgz
+**/__pycache__/
+**/*.pyc
+**/.DS_Store
+.neo-skill.json

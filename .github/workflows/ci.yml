@@ -26,11 +26,28 @@ jobs:
         run: chmod +x bin/*.js
 
       - name: Node syntax check
-        run: |
-          node --check bin/omni-skill.js
+        run: node --check bin/neo-skill.js
 
-      - name: npm pack
-        run: npm pack
+      - name: List packaged skills
+        run: node bin/neo-skill.js list
+
+      - name: Dry-run install
+        run: node bin/neo-skill.js install --dry-run
+
+      - name: Install to temp Codex skills directory
+        run: node bin/neo-skill.js install --target "$RUNNER_TEMP/codex-skills"
+
+      - name: Verify installed skills
+        shell: bash
+        run: |
+          set -euo pipefail
+          for skill in neo-task-governance neo-cpp-refactor neo-mail-assistant; do
+            test -f "$RUNNER_TEMP/codex-skills/$skill/SKILL.md"
+            grep -q "^name: $skill$" "$RUNNER_TEMP/codex-skills/$skill/SKILL.md"
+          done
+
+      - name: npm pack dry run
+        run: npm pack --dry-run
 
   npm-publish:
     runs-on: ubuntu-latest

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Neo Mail Assistant"
+  short_description: "Summarize and draft from mail-like work evidence"
+  default_prompt: "Use $neo-mail-assistant to summarize, draft, review, or turn these email-like work materials into structured task evidence."
