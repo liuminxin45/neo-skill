@@ -1,0 +1,4 @@
+interface:
+  display_name: "Neo Capability Boundary Governance"
+  short_description: "判断流程该落在脚本、Skill、自动化还是人工确认"
+  default_prompt: "Use $neo-capability-boundary-governance to classify this workflow and recommend the right Codex capability layer."
