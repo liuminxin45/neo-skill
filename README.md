@@ -11,6 +11,7 @@
 | `neo-mail-assistant` | 弥补个人沟通中不够谨慎、容易留下漏洞的问题，用邮件材料辅助措辞、归纳证据和判断协作边界。 |
 | `neo-capability-boundary-governance` | 用于治理复杂 Codex/Agent 工作流的能力边界：优先把高确定性重复步骤脚本化，LLM 只处理无法机械验证的语义判断，Automation 只负责编排触发，避免把不确定性伪装成自动化。 |
 | [taste-skill](https://github.com/leonxlnx/taste-skill) | 个人优选开源 skill，面向 UI 设计新手也足够友好，帮助开发者快速获得一套均衡、耐看、少 AI 味的 UI/UX 设计判断。 |
+| [stop-slop](https://github.com/hardikpandya/stop-slop) | 个人优选开源 skill，用于去除过度 AI 化表达；在硅基文本盛行时，帮用户找回文字里缺少的真诚感。 |
 
 ## 安装方式
 
